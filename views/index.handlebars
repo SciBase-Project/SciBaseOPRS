@@ -1,0 +1,19 @@
+<div id="index">
+  <hgroup>
+    <h1>SciBase OPRS</h1>
+    {{#if user}}
+    <h3>Welcome {{user.username}} (<a href="/logout">Logout</a>)</h3>
+    {{else}}
+    <h3>Welcome Stranger</h3>
+    {{/if}}
+  </hgroup>
+  {{#unless user}}
+    <div class="sign_up">
+    	<a href="/register">Don't have an account? Sign up here.</a>
+    </div>
+    <div class="sign_in">
+    	<a href="/login">Already have an account? Click here to login.</a>
+    </div>
+  {{/unless}}
+
+</div>

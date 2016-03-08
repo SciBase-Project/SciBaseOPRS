@@ -1,0 +1,50 @@
+<div id="register_page">
+	<hgroup>
+	  <h1>SciBase OPRS</h1>
+	  <h3>Register</h3>
+	</hgroup>
+	<form action="/register" method="POST">
+	  <div class="group">
+	    <input type="text" name="first_name" id="firstName"><span class="highlight"></span><span class="bar"></span>
+	    <label>First Name</label>
+	  </div>
+	  <div class="group">
+	    <input type="text" name="last_name" id="lastName"><span class="highlight"></span><span class="bar"></span>
+	    <label>Last Name</label>
+	  </div>
+	  <div class="group ui-widget">
+	    <input type="text" name="university" id="universityInput"><span class="highlight"></span><span class="bar"></span>
+	    <label>University</label>
+	  </div>
+	  <div class="group">
+	    <input type="text" name="department" id="departmentInput"><span class="highlight"></span><span class="bar"></span>
+	    <label>Department</label>
+	  </div>
+	  <div class="group">
+	    <input type="email" name="email" id="emailInput"><span class="highlight"></span><span class="bar"></span>
+	    <label>Email</label>
+	  </div>
+	  <div class="group">
+	    <input type="text" name="username" id="usernameInput"><span class="highlight"></span><span class="bar"></span>
+	    <label>Username</label>
+	  </div>
+	  <div class="group">
+	    <input type="password" name="password" id="passwordInput"><span class="highlight"></span><span class="bar"></span>
+	    <label>Password</label>
+	  </div>
+	  <div class="group">
+	    <input type="password" name="confirm_password" id="reconfirmInput"><span class="highlight"></span><span class="bar"></span>
+	    <label>Confirm Password</label>
+	  </div>
+	  <div class="err"></div>
+	  <button type="submit" class="button buttonBlue">Register
+	    <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
+	  </button>
+	  <div class="sign_up">
+	  	<a href="/login">Already have an account? Click here to login.</a>
+	  </div>
+	</form>
+	{{#if info}}
+		{{ info }}
+	{{/if}}
+</div>

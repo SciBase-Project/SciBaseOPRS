@@ -1,0 +1,25 @@
+<div id="login_page">
+	<hgroup>
+	  <h1>SciBase OPRS</h1>
+	  <h3>LOGIN</h3>
+	</hgroup>
+	<form action="/login" method="POST">
+	  <div class="group">
+	    <input type="text" name="username" id="username"><span class="highlight"></span><span class="bar"></span>
+	    <label>Username</label>
+	  </div>
+	  <div class="group">
+	    <input type="password" name="password" id="password"><span class="highlight"></span><span class="bar"></span>
+	    <label>Password</label>
+	  </div>
+	  <button type="submit" class="button login_button buttonBlue">LOGIN
+	    <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
+	  </button>
+	  <div class="sign_up">
+	  	<a href="/register">Don't have an account? Click here to sign up.</a>
+	  </div>
+	</form>
+	{{#if message}}
+		{{ message }}
+	{{/if}}
+</div>
