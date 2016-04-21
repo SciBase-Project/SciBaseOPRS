@@ -14,5 +14,5 @@ $ npm start
 ```
 
 ## Contributors
-Amjad Ali
-Chirag Goel
+- [Amjad Ali](https://github.com/amjd)
+- [Chirag Goel](https://github.com/chirag1goel)
