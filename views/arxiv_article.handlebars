@@ -1,0 +1,195 @@
+
+    <header id="header">
+
+        <div class="navbar navbar-inverse" role="banner">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                    <a class="navbar-brand" href="http://demo.themeum.com/html/triangle/1.1/index.html">
+                        <h1><img src="/images/logo.png" alt="logo"></h1>
+                    </a>
+
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Public Articles</a></li>
+                        <li><a href="#">User Articles</a></li>
+                        <li><a href="#">Login</a></li>
+                    </ul>
+                </div>
+                <div class="search">
+                    <form role="form">
+                        <i class="fa fa-search"></i>
+                        <div class="field-toggle">
+                            <input class="search-form" autocomplete="off" placeholder="Search" type="text">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!--/#header-->
+
+
+    <section id="page-breadcrumb">
+        <div class="vertical-center sun">
+            <div class="container">
+                <div class="row">
+                    <div class="action">
+                        <div class="col-sm-12">
+                            <h1 class="title">Open Peer Review System</h1>
+                            <p>Read and review public articles</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--/#page-breadcrumb-->
+    <section id="blog-details" class="padding-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-9 col-sm-7">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="single-blog blog-details two-column">
+                                <div class="post-content overflow">
+                                    <h2 class="post-title bold">{{title}}</h2>
+                                    <h4 class="post-author">{{author_names}}</h4>
+                                    <p>{{{summary}}}</p>
+
+                                    <br>
+                                    <div class="response-area">
+                                        <h2 class="bold">Reviews</h2>
+                                        <ul class="media-list">
+                                            {{#each comments}}
+                                            <li class="media">
+                                                <div class="post-comment">
+                                                    <a class="pull-left" href="#">
+                                                        <img class="media-object" src="/images/1.png" alt="">
+                                                    </a>
+                                                    <div class="media-body">
+                                                        <span><i class="fa fa-user"></i>Posted by <strong>{{this.name}}</strong></span>
+                                                        <p>{{this.text}}</p>
+                                                        <ul class="nav navbar-nav post-nav">
+                                                            <li><i class="fa fa-clock-o"></i> {{this.created_at}}</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            {{/each}}
+                                            {{#unless comments}}
+                                            <p>No reviews so far.<p>
+                                            {{/unless}}
+                                        </ul>
+                                        <br>
+                                        <div class="col-md-8 col-sm-12">
+                                            <div class="contact-form bottom">
+                                                <h2>Submit a review</h2>
+                                                <form id="main-contact-form" name="contact-form" method="post" action="sendemail.php">
+                                                    <div class="form-group">
+                                                        <input name="name" class="form-control" required="required" placeholder="Name" type="text">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input name="email" class="form-control" required="required" placeholder="Email Id" type="email">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <textarea name="message" id="message" required="required" class="form-control" rows="8" placeholder="Your text here"></textarea>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input name="submit" class="btn btn-submit" value="Submit" type="submit">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--/Response-area-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-5">
+                    <div class="sidebar blog-sidebar">
+                        <div class="sidebar-item  recent">
+                            <h3>Info</h3>
+                            <div class="media">
+                                <div class="pull-left">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                <div class="media-body">
+                                    <h5>Published on: {{publish_date}}</h5>
+                                </div>
+                            </div>
+                            <div class="media">
+                                <div class="pull-left">
+                                    <i class="fa fa-book"></i>
+                                </div>
+                                <div class="media-body">
+                                    <h5>Category: {{category_name}}</h5>
+                                </div>
+                            </div>
+                            <div class="media">
+                                <div class="pull-left">
+                                    <i class="fa fa-share"></i>
+                                </div>
+                                <div class="media-body">
+                                    <h5><a href="{{arxiv_url}}">View on Arxiv</a></h5>
+                                </div>
+                            </div>
+                            <div class="media">
+                                <div class="pull-left">
+                                    <i class="fa fa-download"></i>
+                                </div>
+                                <div class="media-body">
+                                    <h5><a href="{{pdf_url}}">Download PDF</a></h5>
+                                </div>
+                            </div>
+                            <div class="media">
+                                <div class="pull-left">
+                                    <i class="fa fa-comment"></i>
+                                </div>
+                                {{#if arxiv_comments}}
+                                <div class="media-body">
+                                    <h5>Comments</h5>
+                                    <p>{{arxiv_comments}}</p>
+                                </div>
+                                {{/if}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--/#blog-->
+
+    <footer id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 text-center bottom-separator">
+                    <img src="images/under.png" class="img-responsive inline" alt="">
+                </div>
+                <div class="col-sm-12">
+                    <div class="copyright-text text-center">
+                        <p>© SciBase | PES Institute of Technology - Bangalore South Campus. All Rights Reserved.</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!--/#footer-->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+    </script>
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
