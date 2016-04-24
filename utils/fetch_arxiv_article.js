@@ -18,14 +18,16 @@ module.exports = {
                         if (!err1) {
                             console.log("Parsed XML to json");
                             article = res.feed.entry;
-                            // console.log("JSON\n",JSON.stringify(article));
+                            console.log("JSON:\n",JSON.stringify(article),"\n");
                             result = {
                                 title: article.title,
-                                abstract: article.summary,
+                                summary: article.summary,
+                                arxiv_url: article.id,
                                 arxiv_id: article.id.split('/').pop().split('v')[0],
                                 published_at: new Date(article.published),
                                 arxiv_category: article['arxiv:primary_category'].$.term,
-                                authors: []
+                                authors: [],
+                                comments: []
                             };
                             if (article['arxiv:comment'])
                                 result.arxiv_comments = article['arxiv:comment']._;
@@ -37,13 +39,24 @@ module.exports = {
                                     result.pdf_url = article.link[i].$.href;
                                 }
                             }
-                            for (var j in article.author) {
+                            if (typeof article.author == 'object')
+                            {
                                 temp = {};
-                                temp.name = article.author[j].name;
-                                if (article.author[i]['arxiv:affiliation'] && article.author[i]['arxiv:affiliation']._)
-                                    temp.affiliation = article.author[i]['arxiv:affiliation']._;
+                                temp.name = article.author.name;
+                                if (article.author.hasOwnProperty('arxiv:affiliation') && article.author['arxiv:affiliation']._)
+                                temp.affiliation = article.author['arxiv:affiliation']._;
                                 result.authors.push(temp);
+                            } else {
+                                for (var j in article.author) {
+                                    temp = {};
+                                    temp.name = article.author[j].name;
+                                    if (article.author[j].hasOwnProperty('arxiv:affiliation') && article.author[j]['arxiv:affiliation']._)
+                                    temp.affiliation = article.author[j]['arxiv:affiliation']._;
+                                    result.authors.push(temp);
+                                }
                             }
+
+                            console.log("Mongo:\n",JSON.stringify(result),"\n");
 
                             //Push to database
                             var newArticle = new ArxivArticle(result);

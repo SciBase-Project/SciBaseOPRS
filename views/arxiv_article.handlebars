@@ -11,7 +11,7 @@
                         <span class="icon-bar"></span>
                     </button>
 
-                    <a class="navbar-brand" href="http://demo.themeum.com/html/triangle/1.1/index.html">
+                    <a class="navbar-brand" href="/">
                         <h1><img src="/images/logo.png" alt="logo"></h1>
                     </a>
 
@@ -93,7 +93,7 @@
                                         <div class="col-md-8 col-sm-12">
                                             <div class="contact-form bottom">
                                                 <h2>Submit a review</h2>
-                                                <form id="main-contact-form" name="contact-form" method="post" action="sendemail.php">
+                                                <form id="main-contact-form" name="contact-form" method="post" action="">
                                                     <div class="form-group">
                                                         <input name="name" class="form-control" required="required" placeholder="Name" type="text">
                                                     </div>
@@ -141,7 +141,7 @@
                                     <i class="fa fa-share"></i>
                                 </div>
                                 <div class="media-body">
-                                    <h5><a href="{{arxiv_url}}">View on Arxiv</a></h5>
+                                    <h5><a href="{{arxiv_url}}" target="_blank">View on Arxiv</a></h5>
                                 </div>
                             </div>
                             <div class="media">
@@ -149,20 +149,20 @@
                                     <i class="fa fa-download"></i>
                                 </div>
                                 <div class="media-body">
-                                    <h5><a href="{{pdf_url}}">Download PDF</a></h5>
+                                    <h5><a href="{{pdf_url}}" target="_blank">Download PDF</a></h5>
                                 </div>
                             </div>
+                            {{#if arxiv_comments}}
                             <div class="media">
                                 <div class="pull-left">
                                     <i class="fa fa-comment"></i>
                                 </div>
-                                {{#if arxiv_comments}}
                                 <div class="media-body">
                                     <h5>Comments</h5>
                                     <p>{{arxiv_comments}}</p>
                                 </div>
-                                {{/if}}
                             </div>
+                            {{/if}}
                         </div>
                     </div>
                 </div>
@@ -175,9 +175,9 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-12 text-center bottom-separator">
-                    <img src="images/under.png" class="img-responsive inline" alt="">
+                    <img src="/images/under.png" class="img-responsive inline" alt="">
                 </div>
-                <div class="col-sm-12">
+                <div class="col-sm-12" style="margin-top:50px">
                     <div class="copyright-text text-center">
                         <p>© SciBase | PES Institute of Technology - Bangalore South Campus. All Rights Reserved.</p>
 

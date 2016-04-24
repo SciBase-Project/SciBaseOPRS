@@ -124,20 +124,20 @@ router.get('/arxiv_article/:article_id', function(req, res) {
         if (err) throw err;
 
         if (article) {
-            console.log("Found article\n", article);
+            // console.log("Found article\n", article);
             context.title = article.title;
             context.author_names = article.authors.map(function(a) {
                 return a.name;
             }).join(", ");
             context.publish_date = article.published_at.toDateString();
-            context.arxiv_url = 'http://arxiv.org/abs/' + article.arxiv_id;
+            context.arxiv_url = article.arxiv_url;
             context.pdf_url = article.pdf_url;
             context.arxiv_comments = article.arxiv_comments;
             context.category_name = article.arxiv_category;
             context.summary = article.summary;
             context.comments = article.comments.map(function(c) {
-                this.created_at = this.created_at.toDateString();
-                return this;
+                c.created_at = c.created_at.toDateString();
+                return c;
             });
             res.render('arxiv_article', context);
         } else {
@@ -153,6 +153,51 @@ router.post('/arxiv_article/:article_id', function(req, res) {
     var context = {};
     var article_id = req.params.article_id;
     console.log("Article id", article_id);
+
+    var newComment = {
+        name: req.body.name,
+        text: req.body.message,
+        email: req.body.email,
+        created_at: new Date()
+    };
+    console.log("New comment",newComment);
+
+    ArxivArticle.findOne({
+        arxiv_id: article_id
+    }, function(err, article) {
+        if (err) throw err;
+
+        if(article)
+        {
+            if (typeof article.comments == 'object') {
+                article.comments.push(newComment);
+            } else {
+                article.comments = [newComment];
+            }
+
+            article.save();
+
+            context.title = article.title;
+            context.author_names = article.authors.map(function(a) {
+                return a.name;
+            }).join(", ");
+            context.publish_date = article.published_at.toDateString();
+            context.arxiv_url = article.arxiv_url;
+            context.pdf_url = article.pdf_url;
+            context.arxiv_comments = article.arxiv_comments;
+            context.category_name = article.arxiv_category;
+            context.summary = article.summary;
+            context.comments = article.comments.map(function(c) {
+                c.created_at = c.created_at.toDateString();
+                return c;
+            });
+            res.render('arxiv_article', context);
+        }
+        else {
+            res.status(404).send("Article not found");
+        }
+
+    });
 
 });
 
