@@ -16,3 +16,4 @@ $ npm start
 ## Contributors
 - [Amjad Ali](https://github.com/amjd)
 - [Chirag Goel](https://github.com/chirag1goel)
+- [Sandesh Gade](https://github.com/cyberbeast)
