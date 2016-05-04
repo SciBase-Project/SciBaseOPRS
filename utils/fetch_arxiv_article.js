@@ -60,6 +60,7 @@ module.exports = {
 
                             //Push to database
                             var newArticle = new ArxivArticle(result);
+                            newArticle.save(function(err){console.log(err);});
                             console.log("Inserted article to db");
                             console.log(newArticle);
 
