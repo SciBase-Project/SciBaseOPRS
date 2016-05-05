@@ -2,7 +2,7 @@ var express = require('express');
 var passport = require('passport');
 var Account = require('../models/account');
 var ArxivArticle = require('../models/arxiv_article');
-var fa = require("../utils/fetch_arxiv_article");
+var arxiv = require("../utils/arxiv");
 var router = express.Router();
 
 router.get('/', function(req, res) {
@@ -113,7 +113,7 @@ router.get('/ping', function(req, res) {
     res.status(200).send("pong!");
 });
 
-router.get('/arxiv_article/:article_id', function(req, res) {
+router.get('/public_articles/:article_id', function(req, res) {
     var context = {};
     var article_id = req.params.article_id;
     console.log("Article id", article_id);
@@ -141,14 +141,14 @@ router.get('/arxiv_article/:article_id', function(req, res) {
             });
             res.render('arxiv_article', context);
         } else {
-            fa.fetchArticle(article_id, function() {
-                res.redirect("/arxiv_article/" + article_id);
+            arxiv.fetchArticle(article_id, function() {
+                res.redirect("/public_articles/" + article_id);
             });
         }
     }); // findOne ends
 });
 
-router.post('/arxiv_article/:article_id', function(req, res) {
+router.post('/public_articles/:article_id', function(req, res) {
     // TODO: This needs to handle adding of comments via POST request
     var context = {};
     var article_id = req.params.article_id;
@@ -160,7 +160,7 @@ router.post('/arxiv_article/:article_id', function(req, res) {
         email: req.body.email,
         created_at: new Date()
     };
-    console.log("New comment",newComment);
+    console.log("New comment:",newComment);
 
     ArxivArticle.findOne({
         arxiv_id: article_id
@@ -197,6 +197,26 @@ router.post('/arxiv_article/:article_id', function(req, res) {
             res.status(404).send("Article not found");
         }
 
+    });
+
+});
+
+
+router.get("/public_articles", function(req, res) {
+    res.render("public_articles",{});
+});
+
+
+router.post("/public_articles", function(req, res) {
+    var context = {};
+    var search_term = req.body.search_term;
+
+    arxiv.searchArticles(search_term, 0, function(result) {
+        console.log("Search result",result);
+        context.count = result.count;
+        context.search_results = result.results;
+        context.search_term = search_term;
+        res.render("public_articles", context);
     });
 
 });

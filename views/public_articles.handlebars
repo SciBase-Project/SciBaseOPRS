@@ -1,0 +1,116 @@
+
+    <header id="header">
+
+        <div class="navbar navbar-inverse" role="banner">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                    <a class="navbar-brand" href="/">
+                        <h1><img src="/images/logo.png" alt="logo"></h1>
+                    </a>
+
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="/public_articles">Public Articles</a></li>
+                        <li><a href="#">User Articles</a></li>
+                        <li><a href="#">Login</a></li>
+                    </ul>
+                </div>
+                <div class="search">
+                    <form role="form">
+                        <i class="fa fa-search"></i>
+                        <div class="field-toggle">
+                            <input class="search-form" autocomplete="off" placeholder="Search" type="text">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!--/#header-->
+
+
+    <section id="page-breadcrumb">
+        <div class="vertical-center sun">
+            <div class="container">
+                <div class="row">
+                    <div class="action">
+                        <div class="col-sm-12">
+                            <h1 class="title">Open Peer Review System</h1>
+                            <p>Read and review public articles</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--/#page-breadcrumb-->
+
+    <section id="blog-details" class="padding-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <h2 class="post-title center">Search for articles by title, keywords or author name.</h2>
+                    <br>
+                    <form method="POST" action="">
+                        <div class="form-group col-md-9 col-sm-12">
+                            <input name="search_term" id="search_term" class="form-control" type="text" value="{{search_term}}" placeholder="Enter search terms..."></input>
+                        </div>
+                        <div class="form-group col-md-3 col-sm-12">
+                            <input class="btn btn-submit" type="submit" value="Search"></input>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <br>
+                    {{#if search_results}}
+                        <h2>Search results</h2>
+                        {{#each search_results}}
+                        <div class="">
+                            <a href="/public_articles/{{id}}"><h3>{{title}}</h3></a>
+                            <p>Authors: {{authors}}</p>
+                            <p>Published: {{published_at}}</p>
+                        </div>
+                        {{/each}}
+                    {{else}}
+                    {{/if}}
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!--/#blog-->
+
+    <footer id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 text-center bottom-separator">
+                    <img src="/images/under.png" class="img-responsive inline" alt="">
+                </div>
+                <div class="col-sm-12" style="margin-top:50px">
+                    <div class="copyright-text text-center">
+                        <p>© SciBase | PES Institute of Technology - Bangalore South Campus. All Rights Reserved.</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!--/#footer-->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+    </script>
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>

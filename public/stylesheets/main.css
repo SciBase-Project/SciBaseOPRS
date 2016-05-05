@@ -2751,3 +2751,13 @@ span.stButton_gradient,
   border-radius: 100%;
   margin: 10px 0;
 }
+
+
+/* Custom CSS */
+#search_term {
+    height: 3.3em;
+}
+
+.center {
+    text-align: center;
+}

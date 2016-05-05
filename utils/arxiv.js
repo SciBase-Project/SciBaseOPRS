@@ -39,7 +39,7 @@ module.exports = {
                                     result.pdf_url = article.link[i].$.href;
                                 }
                             }
-                            if (typeof article.author == 'object')
+                            if (!Array.isArray(article.author))
                             {
                                 temp = {};
                                 temp.name = article.author.name;
@@ -73,11 +73,62 @@ module.exports = {
                             console.log("XML parsing error", err1);
                         }
                         callback();
-                    }); //xml2js.parseString ends
+                    }); // xml2js.parseString ends
                 } else {
                     console.log("Request error", err);
                 }
 
             }); // request ends
-        } // fetchArticle ends
+        }, // fetchArticle ends
+
+    searchArticles: function(search_term, start, callback) {
+        var search_url = "http://export.arxiv.org/api/query?search_query=all:" + search_term + "&start=" + start;
+        var results = [];
+        var result_object = {};
+
+        request(search_url, function(err, resp, body) {
+            console.log("Resp",resp.statusCode);
+            if (!err && resp.statusCode == 200) {
+                console.log("Request successful");
+                xml = body;
+
+                xml2js.parseString(xml, {
+                    explicitArray: false
+                }, function(err1, res) {
+                    if(!err1) {
+                        var articles = res.feed.entry;
+                        result_object.count = parseInt(res.feed['opensearch:totalResults']._);
+
+                        for(var i in articles)
+                        {
+                            var temp = {};
+                            temp.title = articles[i].title.replace('\n','');
+                            temp.id = articles[i].id.split('/').pop().split('v')[0];
+                            temp.published_at = new Date(articles[i].published).toDateString();
+                            console.log("Author", articles[i].author);
+                            if (!Array.isArray(articles[i].author))
+                            {
+                                temp.authors = articles[i].author.name;
+                            } else {
+                                temp.authors = articles[i].author.map(function(a) {
+                                    return a.name;
+                                }).join(', ');
+                            }
+
+                            results.push(temp);
+                            result_object.results = results;
+                        }
+
+                    } else {
+                        console.log("XML parsing error", err1);
+                    }
+                    callback(result_object);
+                }); // xml2js.parseString ends
+
+            } else {
+                console.log("Request error", err);
+            }
+        }); // request ends
+
+    } // searchArticles
 };
