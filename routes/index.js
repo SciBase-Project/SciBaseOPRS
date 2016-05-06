@@ -228,7 +228,7 @@ router.post("/public_articles", function(req, res) {
             {
                 context.pages.push({
                     number: i,
-                    link: '/public_articles/search'+search_term.replace(' ','+')+'/'+i
+                    link: '/public_articles/search/'+ search_term.replace(/ /g,'+') +'/'+i
                 });
             }
         }
@@ -237,7 +237,7 @@ router.post("/public_articles", function(req, res) {
             {
                 context.pages.push({
                     number: i,
-                    link: '/public_articles/search'+search_term.replace(' ','+')+'/'+i
+                    link: '/public_articles/search/'+ search_term.replace(/ /g,'+') +'/'+i
                 });
             }
         }
@@ -248,7 +248,8 @@ router.post("/public_articles", function(req, res) {
 
 router.get("/public_articles/search/:search_term", function(req, res) {
     var context = {};
-    var search_term = req.params.search_term.replace('+',' ');
+    var search_term = req.params.search_term.replace(/\+/g,' ');
+    console.log("Search term",search_term);
 
     console.log(search_term);
 
@@ -271,7 +272,7 @@ router.get("/public_articles/search/:search_term", function(req, res) {
             {
                 context.pages.push({
                     number: i,
-                    link: '/public_articles/search'+search_term.replace(' ','+')+'/'+i
+                    link: '/public_articles/search/'+ search_term.replace(/ /g,'+') +'/'+i
                 });
             }
         }
@@ -280,7 +281,7 @@ router.get("/public_articles/search/:search_term", function(req, res) {
             {
                 context.pages.push({
                     number: i,
-                    link: '/public_articles/search'+search_term.replace(' ','+')+'/'+i
+                    link: '/public_articles/search/'+ search_term.replace(/ /g,'+') +'/'+i
                 });
             }
         }
@@ -290,7 +291,8 @@ router.get("/public_articles/search/:search_term", function(req, res) {
 
 router.get("/public_articles/search/:search_term/:page", function(req, res) {
     var context = {};
-    var search_term = req.params.search_term.replace('+',' ');
+    var search_term = req.params.search_term.replace(/\+/g,' ');
+    console.log("Search term",search_term);
     var page = parseInt(req.params.page);
 
     console.log(search_term, page);
@@ -314,7 +316,7 @@ router.get("/public_articles/search/:search_term/:page", function(req, res) {
             {
                 context.pages.push({
                     number: i,
-                    link: '/public_articles/search'+search_term.replace(' ','+')+'/'+i
+                    link: '/public_articles/search/'+ search_term.replace(/ /g,'+') +'/'+i
                 });
             }
         }
@@ -323,7 +325,7 @@ router.get("/public_articles/search/:search_term/:page", function(req, res) {
             {
                 context.pages.push({
                     number: i,
-                    link: '/public_articles/search'+search_term.replace(' ','+')+'/'+i
+                    link: '/public_articles/search/'+ search_term.replace(/ /g,'+') +'/'+i
                 });
             }
         }
