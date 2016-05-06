@@ -201,11 +201,9 @@ router.post('/public_articles/:article_id', function(req, res) {
 
 });
 
-
 router.get("/public_articles", function(req, res) {
     res.render("public_articles",{});
 });
-
 
 router.post("/public_articles", function(req, res) {
     var context = {};
@@ -216,9 +214,121 @@ router.post("/public_articles", function(req, res) {
         context.count = result.count;
         context.search_results = result.results;
         context.search_term = search_term;
+        context.search_term_safe = search_term.replace(' ','+');
+        context.page_number = 1;
+        context.pages = [];
+        context.previous = context.page_number === 1? false:true;
+        context.next = total_pages - context.page_number >= 10? false:true;
+        context.previous_page = context.page_number - 1;
+        context.next_page = context.page_number + 1;
+        var total_pages = context.count/10;
+        if(total_pages-context.page_number+1 >= 10)
+        {
+            for(i=context.page_number; i<context.page_number+10; i++)
+            {
+                context.pages.push({
+                    number: i,
+                    link: '/public_articles/search'+search_term.replace(' ','+')+'/'+i
+                });
+            }
+        }
+        else {
+            for(i=context.page_number; i<total_pages-context.page_number+1; i++)
+            {
+                context.pages.push({
+                    number: i,
+                    link: '/public_articles/search'+search_term.replace(' ','+')+'/'+i
+                });
+            }
+        }
         res.render("public_articles", context);
     });
 
+});
+
+router.get("/public_articles/search/:search_term", function(req, res) {
+    var context = {};
+    var search_term = req.params.search_term.replace('+',' ');
+
+    console.log(search_term);
+
+    arxiv.searchArticles(search_term, 0, function(result) {
+        console.log("Search result",result);
+        context.count = result.count;
+        context.search_results = result.results;
+        context.search_term = search_term;
+        context.search_term_safe = search_term.replace(' ','+');
+        context.page_number = 1;
+        context.pages = [];
+        context.previous = context.page_number === 1? false:true;
+        context.next = total_pages - context.page_number >= 10? false:true;
+        context.previous_page = context.page_number - 1;
+        context.next_page = context.page_number + 1;
+        var total_pages = context.count/10;
+        if(total_pages-context.page_number+1 >= 10)
+        {
+            for(i=context.page_number; i<context.page_number+10; i++)
+            {
+                context.pages.push({
+                    number: i,
+                    link: '/public_articles/search'+search_term.replace(' ','+')+'/'+i
+                });
+            }
+        }
+        else {
+            for(i=context.page_number; i<total_pages-context.page_number+1; i++)
+            {
+                context.pages.push({
+                    number: i,
+                    link: '/public_articles/search'+search_term.replace(' ','+')+'/'+i
+                });
+            }
+        }
+        res.render("public_articles", context);
+    });
+});
+
+router.get("/public_articles/search/:search_term/:page", function(req, res) {
+    var context = {};
+    var search_term = req.params.search_term.replace('+',' ');
+    var page = parseInt(req.params.page);
+
+    console.log(search_term, page);
+
+    arxiv.searchArticles(search_term, (page-1)*10, function(result) {
+        console.log("Search result",result);
+        context.count = result.count;
+        context.search_results = result.results;
+        context.search_term = search_term;
+        context.search_term_safe = search_term.replace(' ','+');
+        context.page_number = page;
+        context.pages = [];
+        context.previous = context.page_number === 1? false:true;
+        context.next = total_pages - context.page_number >= 10? false:true;
+        context.previous_page = context.page_number - 1;
+        context.next_page = context.page_number + 1;
+        var total_pages = context.count/10;
+        if(total_pages-context.page_number+1 >= 10)
+        {
+            for(i=context.page_number; i<context.page_number+10; i++)
+            {
+                context.pages.push({
+                    number: i,
+                    link: '/public_articles/search'+search_term.replace(' ','+')+'/'+i
+                });
+            }
+        }
+        else {
+            for(i=context.page_number; i<total_pages-context.page_number+1; i++)
+            {
+                context.pages.push({
+                    number: i,
+                    link: '/public_articles/search'+search_term.replace(' ','+')+'/'+i
+                });
+            }
+        }
+        res.render("public_articles", context);
+    });
 });
 
 module.exports = router;

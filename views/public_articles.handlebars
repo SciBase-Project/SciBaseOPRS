@@ -76,12 +76,41 @@
                     {{#if search_results}}
                         <h2>Search results</h2>
                         {{#each search_results}}
-                        <div class="">
+                        <div class="search-result">
                             <a href="/public_articles/{{id}}"><h3>{{title}}</h3></a>
                             <p>Authors: {{authors}}</p>
                             <p>Published: {{published_at}}</p>
                         </div>
                         {{/each}}
+
+                        {{#if pages}}
+                        <nav>
+                          <ul class="pagination">
+                            <li>
+                              {{#if previous}}
+                              <a href="/public_articles/search/{{search_term_safe}}/{{previous_page}}" aria-label="Previous">
+                              {{else}}
+                              <a href="#" aria-label="Previous">
+                              {{/if}}
+                                <span aria-hidden="true">&laquo;</span>
+                              </a>
+                            </li>
+
+                            {{#each pages}}
+                            <li><a href="{{link}}">{{number}}</a></li>
+                            {{/each}}
+                            <li>
+                                {{#if next}}
+                                <a href="/public_articles/search/{{search_term_safe}}/{{next_page}}" aria-label="Previous">
+                                {{else}}
+                                <a href="#" aria-label="Next">
+                                {{/if}}
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                          </ul>
+                        </nav>
+                        {{/if}}
                     {{else}}
                     {{/if}}
                 </div>

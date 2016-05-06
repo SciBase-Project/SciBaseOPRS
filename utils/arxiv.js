@@ -87,7 +87,6 @@ module.exports = {
         var result_object = {};
 
         request(search_url, function(err, resp, body) {
-            console.log("Resp",resp.statusCode);
             if (!err && resp.statusCode == 200) {
                 console.log("Request successful");
                 xml = body;
@@ -105,7 +104,6 @@ module.exports = {
                             temp.title = articles[i].title.replace('\n','');
                             temp.id = articles[i].id.split('/').pop().split('v')[0];
                             temp.published_at = new Date(articles[i].published).toDateString();
-                            console.log("Author", articles[i].author);
                             if (!Array.isArray(articles[i].author))
                             {
                                 temp.authors = articles[i].author.name;
