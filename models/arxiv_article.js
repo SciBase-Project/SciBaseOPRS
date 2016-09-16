@@ -13,7 +13,9 @@ var ArxivArticle = new Schema({
     arxiv_comments: String,
     arxiv_category: String,
     pdf_url: String,
-	created_at: { type: Date, default: Date.now },
+    views: {type: Number, default: 0}
+}, {
+    timestamps: true
 });
 
 module.exports = mongoose.model('ArxivArticle', ArxivArticle);

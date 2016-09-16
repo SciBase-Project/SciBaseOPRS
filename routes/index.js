@@ -5,6 +5,174 @@ var ArxivArticle = require('../models/arxiv_article');
 var arxiv = require("../utils/arxiv");
 var router = express.Router();
 
+//--------------------
+
+var categories = [
+    {'astro-ph': 'Astrophysics'},
+    {'cond-mat': 'Condensed Matter'},
+    {'cs': 'Computer Science'},
+    {'gr-qc': 'General Relativity and Quantum Cosmology'},
+    {'hep-ex': 'High Energy Physics - Experiment '},
+    {'hep-lat': 'High Energy Physics - Lattice '},
+    {'hep-ph': 'High Energy Physics - Phenomenology '},
+    {'hep-th': 'High Energy Physics - Theory '},
+    {'math-ph': 'Mathematical Physics'},
+    {'math': 'Mathematics'},
+    {'nlin': 'Nonlinear Sciences'},
+    {'nucl-ex': 'Nuclear Experiment '},
+    {'nucl-th': 'Nuclear Theory '},
+    {'physics': 'Physics'},
+    {'q-bio': 'Quantitative Biology'},
+    {'quant-ph': 'Quantum Physics'},
+    {'stat': 'Statistics'},
+];
+
+var category_subcategory_mapping = [
+    {'astro-ph': []},
+    {'cond-mat': [
+        {'dis-nn': 'Disordered Systems and Neural Networks'},
+        {'mes-hall': 'Mesoscopic Systems and Quantum Hall Effect'},
+        {'mtrl-sci': 'Materials Science'},
+        {'other': 'Other'},
+        {'soft': 'Soft Condensed Matter'},
+        {'stat-mech': 'Statistical Mechanics'},
+        {'str-el': 'Strongly Correlated Electrons'},
+        {'supr-con': 'Superconductivity'}
+    ]},
+    {'cs': [
+        {'AI': 'Artificial Intelligence'},
+        {'AR': 'Architecture'},
+        {'CC': 'Computational Complexity'},
+        {'CE': 'Computational Engineering; Finance; and Science'},
+        {'CG': 'Computational Geometry'},
+        {'CL': 'Computation and Language'},
+        {'CR': 'Cryptography and Security'},
+        {'CV': 'Computer Vision and Pattern Recognition'},
+        {'CY': 'Computers and Society'},
+        {'DB': 'Databases'},
+        {'DC': 'Distributed; Parallel; and Cluster Computing'},
+        {'DL': 'Digital Libraries'},
+        {'DM': 'Discrete Mathematics'},
+        {'DS': 'Data Structures and Algorithms'},
+        {'GL': 'General Literature'},
+        {'GR': 'Graphics'},
+        {'GT': 'Computer Science and Game Theory'},
+        {'HC': 'Human-Computer Interaction'},
+        {'IR': 'Information Retrieval'},
+        {'IT': 'Information Theory'},
+        {'LG': 'Learning'},
+        {'LO': 'Logic in Computer Science'},
+        {'MA': 'Multiagent Systems'},
+        {'MM': 'Multimedia'},
+        {'MS': 'Mathematical Software'},
+        {'NA': 'Numerical Analysis'},
+        {'NE': 'Neural and Evolutionary Computing'},
+        {'NI': 'Networking and Internet Architecture'},
+        {'OH': 'Other'},
+        {'OS': 'Operating Systems'},
+        {'PF': 'Performance'},
+        {'PL': 'Programming Languages'},
+        {'RO': 'Robotics'},
+        {'SC': 'Symbolic Computation'},
+        {'SD': 'Sound'},
+        {'SE': 'Software Engineering'}
+    ]},
+    {'gr-qc': []},
+    {'hep-ex': []},
+    {'hep-lat': []},
+    {'hep-ph': []},
+    {'hep-th': []},
+    {'math-ph': []},
+    {'math': [
+        {'AC': 'Commutative Algebra'},
+        {'AG': 'Algebraic Geometry'},
+        {'AP': 'Analysis of PDEs'},
+        {'AT': 'Algebraic Topology'},
+        {'CA': 'Classical Analysis and ODEs'},
+        {'CO': 'Combinatorics'},
+        {'CT': 'Category Theory'},
+        {'CV': 'Complex Variables'},
+        {'DG': 'Differential Geometry'},
+        {'DS': 'Dynamical Systems'},
+        {'FA': 'Functional Analysis'},
+        {'GM': 'General Mathematics'},
+        {'GN': 'General Topology'},
+        {'GR': 'Group Theory'},
+        {'GT': 'Geometric Topology'},
+        {'HO': 'History and Overview'},
+        {'IT': 'Information Theory'},
+        {'KT': 'K-Theory and Homology'},
+        {'LO': 'Logic'},
+        {'MG': 'Metric Geometry'},
+        {'MP': 'Mathematical Physics'},
+        {'NA': 'Numerical Analysis'},
+        {'NT': 'Number Theory'},
+        {'OA': 'Operator Algebras'},
+        {'OC': 'Optimization and Control'},
+        {'PR': 'Probability'},
+        {'QA': 'Quantum Algebra'},
+        {'RA': 'Rings and Algebras'},
+        {'RT': 'Representation Theory'},
+        {'SG': 'Symplectic Geometry'},
+        {'SP': 'Spectral Theory'},
+        {'ST': 'Statistics'}
+    ]},
+    {'nlin': [
+        {'AO': 'Adaptation and Self-Organizing Systems'},
+        {'CD': 'Chaotic Dynamics'},
+        {'CG': 'Cellular Automata and Lattice Gases'},
+        {'PS': 'Pattern Formation and Solitons'},
+        {'SI': 'Exactly Solvable and Integrable Systems'}
+    ]},
+    {'nucl-ex': []},
+    {'nucl-th': []},
+    {'physics': [
+        {'acc-ph' : 'Accelerator Physics'},
+        {'ao-ph' : 'Atmospheric and Oceanic Physics'},
+        {'atm-clus' : 'Atomic and Molecular Clusters'},
+        {'atom-ph' : 'Atomic Physics'},
+        {'bio-ph' : 'Biological Physics'},
+        {'chem-ph' : 'Chemical Physics'},
+        {'class-ph' : 'Classical Physics'},
+        {'comp-ph' : 'Computational Physics'},
+        {'data-an' : 'Data Analysis; Statistics and Probability'},
+        {'ed-ph' : 'Physics Education'},
+        {'flu-dyn' : 'Fluid Dynamics'},
+        {'gen-ph' : 'General Physics'},
+        {'geo-ph' : 'Geophysics'},
+        {'hist-ph' : 'History of Physics'},
+        {'ins-det' : 'Instrumentation and Detectors'},
+        {'med-ph' : 'Medical Physics'},
+        {'optics' : 'Optics'},
+        {'plasm-ph' : 'Plasma Physics'},
+        {'pop-ph' : 'Popular Physics'},
+        {'soc-ph' : 'Physics and Society'},
+        {'space-ph' : 'Space Physics'}
+    ]},
+    {'q-bio': [
+        {'BM': 'Biomolecules'},
+        {'CB': 'Cell Behavior'},
+        {'GN': 'Genomics'},
+        {'MN': 'Molecular Networks'},
+        {'NC': 'Neurons and Cognition'},
+        {'OT': 'Other'},
+        {'PE': 'Populations and Evolution'},
+        {'QM': 'Quantitative Methods'},
+        {'SC': 'Subcellular Processes'},
+        {'TO': 'Tissues and Organs'}
+    ]},
+    {'quant-ph': []},
+    {'stat': [
+        {'AP': 'Applications'},
+        {'CO': 'Computation'},
+        {'ME': 'Methodology'},
+        {'ML': 'Machine Learning'},
+        {'TH': 'Theory'}
+    ]},
+];
+
+//--------------------
+
 router.get('/', function(req, res) {
     res.render('index', {
         title: 'SciBase OPRS',
@@ -81,32 +249,10 @@ router.get('/logout', function(req, res, next) {
     });
 });
 
-router.get('/universityList', function(req, res, next) {
-    var universityList = [
-        "ActionScript",
-        "AppleScript",
-        "Asp",
-        "BASIC",
-        "C",
-        "C++",
-        "Clojure",
-        "COBOL",
-        "ColdFusion",
-        "Erlang",
-        "Fortran",
-        "Groovy",
-        "Haskell",
-        "Java",
-        "JavaScript",
-        "Lisp",
-        "Perl",
-        "PHP",
-        "Python",
-        "Ruby",
-        "Scala",
-        "Scheme"
-    ];
-    res.send(universityList);
+router.get('/getSubCategories', function(req, res, next) {
+    var cat = req.query.category_id;
+
+    res.send(category_subcategory_mapping[cat]);
 });
 
 router.get('/ping', function(req, res) {
@@ -124,6 +270,11 @@ router.get('/public_articles/:article_id', function(req, res) {
         if (err) throw err;
 
         if (article) {
+            // Increment views count
+            article.views.$inc();
+            article.save();
+            console.log("Views:", article.views);
+
             // console.log("Found article\n", article);
             context.title = article.title;
             context.author_names = article.authors.map(function(a) {
@@ -202,7 +353,11 @@ router.post('/public_articles/:article_id', function(req, res) {
 });
 
 router.get("/public_articles", function(req, res) {
-    res.render("public_articles",{});
+    var context = {};
+    context['categories'] = categories;
+
+
+    res.render("public_articles",context);
 });
 
 router.post("/public_articles", function(req, res) {

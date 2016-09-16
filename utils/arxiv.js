@@ -82,7 +82,7 @@ module.exports = {
         }, // fetchArticle ends
 
     searchArticles: function(search_term, start, callback) {
-        var search_url = "http://export.arxiv.org/api/query?search_query=all:" + search_term + "&start=" + start;
+        var search_url = "http://export.arxiv.org/api/query?search_query=" + search_term + "&start=" + start;
         var results = [];
         var result_object = {};
 
