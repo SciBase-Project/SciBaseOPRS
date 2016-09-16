@@ -1951,6 +1951,65 @@ span.stButton_gradient,
   margin-left: 70px;
 }
 
+#blog-details .container .left-panel {
+  padding-top: 50px;
+  margin-bottom: 20px;
+}
+
+#blog-details .container .left-panel h2 {
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#blog-details .container .left-panel select {
+  width: 100%;
+  margin: 10px 0;
+}
+
+#blog-details .container .left-panel select.hidden {
+  display: none;
+}
+
+#blog-details .container .left-panel select option {
+  width: 100%;
+  padding: 5px 10px;
+}
+
+#blog-details .container .left-panel .disabled {
+  cursor: not-allowed;
+}
+
+
+
+#blog-details .container .right-panel {
+  padding-top: 50px;
+  margin-bottom: 20px;
+}
+
+#blog-details .container .right-panel h2 {
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#blog-details .container .right-panel ul{  
+  list-style: none;
+  padding: 0;
+  width: 80%;
+  margin: 0 auto;
+}
+
+#blog-details .container .right-panel ul li {
+  font-style: italic;
+  border-bottom: 1px solid black;
+  text-align: center;
+}
+
+#blog-details .container .right-panel ul li:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
 
 /****************************
 ********* Contact Us*********

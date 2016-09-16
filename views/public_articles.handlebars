@@ -56,65 +56,91 @@
 
     <section id="blog-details" class="padding-top">
         <div class="container">
-            <div class="row">
-                <div class="col-md-12 col-sm-12">
-                    <h2 class="post-title center">Search for articles by title, keywords or author name.</h2>
-                    <br>
-                    <form method="POST" action="/public_articles">
-                        <div class="form-group col-md-9 col-sm-12">
-                            <input name="search_term" id="search_term" class="form-control" type="text" value="{{search_term}}" placeholder="Enter search terms..."></input>
-                        </div>
-                        <div class="form-group col-md-3 col-sm-12">
-                            <input class="btn btn-submit" type="submit" value="Search"></input>
-                        </div>
-                    </form>
+            <div class="left-panel col-md-2 col-sm-2">
+                <h2>Filter</h2>
+                <select>
+                    <option>Select Category</option>
+                </select>
+                <select class="hidden">
+                    <option>Sub-Category</option>
+                </select><br/>
+                <input type="submit" value="Filter" class="btn btn-submit disabled"><br/>
+            </div>
+            <div class="center-panel col-md-8 col-sm-8">
+                <div class="row">
+                    <div>
+                        <h2 class="post-title center">Search for articles by title, keywords or author name.</h2>
+                        <br>
+                        <form method="POST" action="/public_articles">
+                            <div class="form-group col-md-9 col-sm-12">
+                                <input name="search_term" id="search_term" class="form-control" type="text" value="{{search_term}}" placeholder="Enter search terms..."></input>
+                            </div>
+                            <div class="form-group col-md-3 col-sm-12">
+                                <input class="btn btn-submit" type="submit" value="Search"></input>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <br>
+                        {{#if search_results}}
+                            <h2>Search results</h2>
+                            {{#each search_results}}
+                            <div class="search-result">
+                                <a href="/public_articles/{{id}}"><h3>{{title}}</h3></a>
+                                <p>Authors: {{authors}}</p>
+                                <p>Published: {{published_at}}</p>
+                            </div>
+                            {{/each}}
+
+                            {{#if pages}}
+                            <nav>
+                              <ul class="pagination">
+                                <li>
+                                  {{#if previous}}
+                                  <a href="/public_articles/search/{{search_term_safe}}/{{previous_page}}" aria-label="Previous">
+                                  {{else}}
+                                  <a href="#" aria-label="Previous">
+                                  {{/if}}
+                                    <span aria-hidden="true">&laquo;</span>
+                                  </a>
+                                </li>
+
+                                {{#each pages}}
+                                <li><a href="{{link}}">{{number}}</a></li>
+                                {{/each}}
+                                <li>
+                                    {{#if next}}
+                                    <a href="/public_articles/search/{{search_term_safe}}/{{next_page}}" aria-label="Previous">
+                                    {{else}}
+                                    <a href="#" aria-label="Next">
+                                    {{/if}}
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                              </ul>
+                            </nav>
+                            {{/if}}
+                        {{else}}
+                        {{/if}}
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12 col-sm-12">
-                    <br>
-                    {{#if search_results}}
-                        <h2>Search results</h2>
-                        {{#each search_results}}
-                        <div class="search-result">
-                            <a href="/public_articles/{{id}}"><h3>{{title}}</h3></a>
-                            <p>Authors: {{authors}}</p>
-                            <p>Published: {{published_at}}</p>
-                        </div>
-                        {{/each}}
-
-                        {{#if pages}}
-                        <nav>
-                          <ul class="pagination">
-                            <li>
-                              {{#if previous}}
-                              <a href="/public_articles/search/{{search_term_safe}}/{{previous_page}}" aria-label="Previous">
-                              {{else}}
-                              <a href="#" aria-label="Previous">
-                              {{/if}}
-                                <span aria-hidden="true">&laquo;</span>
-                              </a>
-                            </li>
-
-                            {{#each pages}}
-                            <li><a href="{{link}}">{{number}}</a></li>
-                            {{/each}}
-                            <li>
-                                {{#if next}}
-                                <a href="/public_articles/search/{{search_term_safe}}/{{next_page}}" aria-label="Previous">
-                                {{else}}
-                                <a href="#" aria-label="Next">
-                                {{/if}}
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                          </ul>
-                        </nav>
-                        {{/if}}
-                    {{else}}
-                    {{/if}}
-                </div>
-
+            <div class="right-panel col-md-2 col-sm-2">
+                <h2>Recently Reviewed</h2>
+                <ul>
+                    <li>Some article</li>
+                    <li>Some article</li>
+                    <li>Some article</li>
+                    <li>Some article</li>
+                    <li>Some article</li>
+                    <li>Some article</li>
+                    <li>Some article</li>
+                    <li>Some article</li>
+                    <li>Some article</li>
+                    <li>Some article</li>
+                </ul>
             </div>
         </div>
     </section>
