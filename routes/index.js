@@ -177,12 +177,14 @@ router.get('/', function(req, res) {
     res.render('index', {
         title: 'SciBase OPRS',
         user: req.user,
-        layout: 'alt'
+        layout: 'main'
     });
 });
 
 router.get('/register', function(req, res) {
-    res.render('register', {});
+    res.render('register', {
+    	layout:'alt'
+    });
 });
 
 router.post('/register', function(req, res, next) {
