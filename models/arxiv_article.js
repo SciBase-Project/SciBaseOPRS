@@ -13,7 +13,8 @@ var ArxivArticle = new Schema({
     arxiv_comments: String,
     arxiv_category: String,
     pdf_url: String,
-    views: {type: Number, default: 0}
+    views: {type: Number, default: 0},
+    last_commented_at: Date
 }, {
     timestamps: true
 });

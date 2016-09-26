@@ -58,10 +58,10 @@
         <div class="container">
             <div class="left-panel col-md-2 col-sm-2">
                 <h2>Filter</h2>
-                <select>
+                <select id="dropdown-cat">
                     <option>Select Category</option>
                 </select>
-                <select class="hidden">
+                <select id="dropdown-subcat" class="hidden">
                     <option>Sub-Category</option>
                 </select><br/>
                 <input type="submit" value="Filter" class="btn btn-submit disabled"><br/>
@@ -99,7 +99,7 @@
                               <ul class="pagination">
                                 <li>
                                   {{#if previous}}
-                                  <a href="/public_articles/search/{{search_term_safe}}/{{previous_page}}" aria-label="Previous">
+                                  <a href="/public_articles/search/{{search_term_safe}}?p={{previous_page}}" aria-label="Previous">
                                   {{else}}
                                   <a href="#" aria-label="Previous">
                                   {{/if}}
@@ -112,7 +112,7 @@
                                 {{/each}}
                                 <li>
                                     {{#if next}}
-                                    <a href="/public_articles/search/{{search_term_safe}}/{{next_page}}" aria-label="Previous">
+                                    <a href="/public_articles/search/{{search_term_safe}}?p={{next_page}}" aria-label="Previous">
                                     {{else}}
                                     <a href="#" aria-label="Next">
                                     {{/if}}
