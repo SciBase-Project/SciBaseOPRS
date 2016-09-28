@@ -8,168 +8,168 @@ var router = express.Router();
 //--------------------
 
 var categories = [
-    {'astro-ph': 'Astrophysics'},
-    {'cond-mat': 'Condensed Matter'},
-    {'cs': 'Computer Science'},
-    {'gr-qc': 'General Relativity and Quantum Cosmology'},
-    {'hep-ex': 'High Energy Physics - Experiment '},
-    {'hep-lat': 'High Energy Physics - Lattice '},
-    {'hep-ph': 'High Energy Physics - Phenomenology '},
-    {'hep-th': 'High Energy Physics - Theory '},
-    {'math-ph': 'Mathematical Physics'},
-    {'math': 'Mathematics'},
-    {'nlin': 'Nonlinear Sciences'},
-    {'nucl-ex': 'Nuclear Experiment '},
-    {'nucl-th': 'Nuclear Theory '},
-    {'physics': 'Physics'},
-    {'q-bio': 'Quantitative Biology'},
-    {'quant-ph': 'Quantum Physics'},
-    {'stat': 'Statistics'},
+    {title: 'Astrophysics', value: 'astro-ph'},
+    {title: 'Condensed Matter', value: 'cond-mat'},
+    {title: 'Computer Science', value: 'cs'},
+    {title: 'General Relativity and Quantum Cosmology', value: 'gr-qc'},
+    {title: 'High Energy Physics - Experiment ', value: 'hep-ex'},
+    {title: 'High Energy Physics - Lattice ', value: 'hep-lat'},
+    {title: 'High Energy Physics - Phenomenology ', value: 'hep-ph'},
+    {title: 'High Energy Physics - Theory ', value: 'hep-th'},
+    {title: 'Mathematical Physics', value: 'math-ph'},
+    {title: 'Mathematics', value: 'math'},
+    {title: 'Nonlinear Sciences', value: 'nlin'},
+    {title: 'Nuclear Experiment ', value: 'nucl-ex'},
+    {title: 'Nuclear Theory ', value: 'nucl-th'},
+    {title: 'Physics', value: 'physics'},
+    {title: 'Quantitative Biology', value: 'q-bio'},
+    {title: 'Quantum Physics', value: 'quant-ph'},
+    {title: 'Statistics', value: 'stat'},
 ];
 
-var category_subcategory_mapping = [
-    {'astro-ph': []},
-    {'cond-mat': [
-        {'dis-nn': 'Disordered Systems and Neural Networks'},
-        {'mes-hall': 'Mesoscopic Systems and Quantum Hall Effect'},
-        {'mtrl-sci': 'Materials Science'},
-        {'other': 'Other'},
-        {'soft': 'Soft Condensed Matter'},
-        {'stat-mech': 'Statistical Mechanics'},
-        {'str-el': 'Strongly Correlated Electrons'},
-        {'supr-con': 'Superconductivity'}
-    ]},
-    {'cs': [
-        {'AI': 'Artificial Intelligence'},
-        {'AR': 'Architecture'},
-        {'CC': 'Computational Complexity'},
-        {'CE': 'Computational Engineering; Finance; and Science'},
-        {'CG': 'Computational Geometry'},
-        {'CL': 'Computation and Language'},
-        {'CR': 'Cryptography and Security'},
-        {'CV': 'Computer Vision and Pattern Recognition'},
-        {'CY': 'Computers and Society'},
-        {'DB': 'Databases'},
-        {'DC': 'Distributed; Parallel; and Cluster Computing'},
-        {'DL': 'Digital Libraries'},
-        {'DM': 'Discrete Mathematics'},
-        {'DS': 'Data Structures and Algorithms'},
-        {'GL': 'General Literature'},
-        {'GR': 'Graphics'},
-        {'GT': 'Computer Science and Game Theory'},
-        {'HC': 'Human-Computer Interaction'},
-        {'IR': 'Information Retrieval'},
-        {'IT': 'Information Theory'},
-        {'LG': 'Learning'},
-        {'LO': 'Logic in Computer Science'},
-        {'MA': 'Multiagent Systems'},
-        {'MM': 'Multimedia'},
-        {'MS': 'Mathematical Software'},
-        {'NA': 'Numerical Analysis'},
-        {'NE': 'Neural and Evolutionary Computing'},
-        {'NI': 'Networking and Internet Architecture'},
-        {'OH': 'Other'},
-        {'OS': 'Operating Systems'},
-        {'PF': 'Performance'},
-        {'PL': 'Programming Languages'},
-        {'RO': 'Robotics'},
-        {'SC': 'Symbolic Computation'},
-        {'SD': 'Sound'},
-        {'SE': 'Software Engineering'}
-    ]},
-    {'gr-qc': []},
-    {'hep-ex': []},
-    {'hep-lat': []},
-    {'hep-ph': []},
-    {'hep-th': []},
-    {'math-ph': []},
-    {'math': [
-        {'AC': 'Commutative Algebra'},
-        {'AG': 'Algebraic Geometry'},
-        {'AP': 'Analysis of PDEs'},
-        {'AT': 'Algebraic Topology'},
-        {'CA': 'Classical Analysis and ODEs'},
-        {'CO': 'Combinatorics'},
-        {'CT': 'Category Theory'},
-        {'CV': 'Complex Variables'},
-        {'DG': 'Differential Geometry'},
-        {'DS': 'Dynamical Systems'},
-        {'FA': 'Functional Analysis'},
-        {'GM': 'General Mathematics'},
-        {'GN': 'General Topology'},
-        {'GR': 'Group Theory'},
-        {'GT': 'Geometric Topology'},
-        {'HO': 'History and Overview'},
-        {'IT': 'Information Theory'},
-        {'KT': 'K-Theory and Homology'},
-        {'LO': 'Logic'},
-        {'MG': 'Metric Geometry'},
-        {'MP': 'Mathematical Physics'},
-        {'NA': 'Numerical Analysis'},
-        {'NT': 'Number Theory'},
-        {'OA': 'Operator Algebras'},
-        {'OC': 'Optimization and Control'},
-        {'PR': 'Probability'},
-        {'QA': 'Quantum Algebra'},
-        {'RA': 'Rings and Algebras'},
-        {'RT': 'Representation Theory'},
-        {'SG': 'Symplectic Geometry'},
-        {'SP': 'Spectral Theory'},
-        {'ST': 'Statistics'}
-    ]},
-    {'nlin': [
-        {'AO': 'Adaptation and Self-Organizing Systems'},
-        {'CD': 'Chaotic Dynamics'},
-        {'CG': 'Cellular Automata and Lattice Gases'},
-        {'PS': 'Pattern Formation and Solitons'},
-        {'SI': 'Exactly Solvable and Integrable Systems'}
-    ]},
-    {'nucl-ex': []},
-    {'nucl-th': []},
-    {'physics': [
-        {'acc-ph' : 'Accelerator Physics'},
-        {'ao-ph' : 'Atmospheric and Oceanic Physics'},
-        {'atm-clus' : 'Atomic and Molecular Clusters'},
-        {'atom-ph' : 'Atomic Physics'},
-        {'bio-ph' : 'Biological Physics'},
-        {'chem-ph' : 'Chemical Physics'},
-        {'class-ph' : 'Classical Physics'},
-        {'comp-ph' : 'Computational Physics'},
-        {'data-an' : 'Data Analysis; Statistics and Probability'},
-        {'ed-ph' : 'Physics Education'},
-        {'flu-dyn' : 'Fluid Dynamics'},
-        {'gen-ph' : 'General Physics'},
-        {'geo-ph' : 'Geophysics'},
-        {'hist-ph' : 'History of Physics'},
-        {'ins-det' : 'Instrumentation and Detectors'},
-        {'med-ph' : 'Medical Physics'},
-        {'optics' : 'Optics'},
-        {'plasm-ph' : 'Plasma Physics'},
-        {'pop-ph' : 'Popular Physics'},
-        {'soc-ph' : 'Physics and Society'},
-        {'space-ph' : 'Space Physics'}
-    ]},
-    {'q-bio': [
-        {'BM': 'Biomolecules'},
-        {'CB': 'Cell Behavior'},
-        {'GN': 'Genomics'},
-        {'MN': 'Molecular Networks'},
-        {'NC': 'Neurons and Cognition'},
-        {'OT': 'Other'},
-        {'PE': 'Populations and Evolution'},
-        {'QM': 'Quantitative Methods'},
-        {'SC': 'Subcellular Processes'},
-        {'TO': 'Tissues and Organs'}
-    ]},
-    {'quant-ph': []},
-    {'stat': [
-        {'AP': 'Applications'},
-        {'CO': 'Computation'},
-        {'ME': 'Methodology'},
-        {'ML': 'Machine Learning'},
-        {'TH': 'Theory'}
-    ]},
-];
+var category_subcategory_mapping = {
+    'astro-ph': [],
+    'cond-mat': [
+        {title: 'Disordered Systems and Neural Networks', value: 'dis-nn'},
+        {title: 'Mesoscopic Systems and Quantum Hall Effect', value: 'mes-hall'},
+        {title: 'Materials Science', value: 'mtrl-sci'},
+        {title: 'Other', value: 'other'},
+        {title: 'Soft Condensed Matter', value: 'soft'},
+        {title: 'Statistical Mechanics', value: 'stat-mech'},
+        {title: 'Strongly Correlated Electrons', value: 'str-el'},
+        {title: 'Superconductivity', value: 'supr-con'}
+    ],
+    'cs': [
+        {title: 'Artificial Intelligence', value: 'AI'},
+        {title: 'Architecture', value: 'AR'},
+        {title: 'Computational Complexity', value: 'CC'},
+        {title: 'Computational Engineering; Finance; and Science', value: 'CE'},
+        {title: 'Computational Geometry', value: 'CG'},
+        {title: 'Computation and Language', value: 'CL'},
+        {title: 'Cryptography and Security', value: 'CR'},
+        {title: 'Computer Vision and Pattern Recognition', value: 'CV'},
+        {title: 'Computers and Society', value: 'CY'},
+        {title: 'Databases', value: 'DB'},
+        {title: 'Distributed; Parallel; and Cluster Computing', value: 'DC'},
+        {title: 'Digital Libraries', value: 'DL'},
+        {title: 'Discrete Mathematics', value: 'DM'},
+        {title: 'Data Structures and Algorithms', value: 'DS'},
+        {title: 'General Literature', value: 'GL'},
+        {title: 'Graphics', value: 'GR'},
+        {title: 'Computer Science and Game Theory', value: 'GT'},
+        {title: 'Human-Computer Interaction', value: 'HC'},
+        {title: 'Information Retrieval', value: 'IR'},
+        {title: 'Information Theory', value: 'IT'},
+        {title: 'Learning', value: 'LG'},
+        {title: 'Logic in Computer Science', value: 'LO'},
+        {title: 'Multiagent Systems', value: 'MA'},
+        {title: 'Multimedia', value: 'MM'},
+        {title: 'Mathematical Software', value: 'MS'},
+        {title: 'Numerical Analysis', value: 'NA'},
+        {title: 'Neural and Evolutionary Computing', value: 'NE'},
+        {title: 'Networking and Internet Architecture', value: 'NI'},
+        {title: 'Other', value: 'OH'},
+        {title: 'Operating Systems', value: 'OS'},
+        {title: 'Performance', value: 'PF'},
+        {title: 'Programming Languages', value: 'PL'},
+        {title: 'Robotics', value: 'RO'},
+        {title: 'Symbolic Computation', value: 'SC'},
+        {title: 'Sound', value: 'SD'},
+        {title: 'Software Engineering', value: 'SE'}
+    ],
+    'gr-qc': [],
+    'hep-ex': [],
+    'hep-lat': [],
+    'hep-ph': [],
+    'hep-th': [],
+    'math-ph': [],
+    'math': [
+        {title: 'Commutative Algebra', value: 'AC'},
+        {title: 'Algebraic Geometry', value: 'AG'},
+        {title: 'Analysis of PDEs', value: 'AP'},
+        {title: 'Algebraic Topology', value: 'AT'},
+        {title: 'Classical Analysis and ODEs', value: 'CA'},
+        {title: 'Combinatorics', value: 'CO'},
+        {title: 'Category Theory', value: 'CT'},
+        {title: 'Complex Variables', value: 'CV'},
+        {title: 'Differential Geometry', value: 'DG'},
+        {title: 'Dynamical Systems', value: 'DS'},
+        {title: 'Functional Analysis', value: 'FA'},
+        {title: 'General Mathematics', value: 'GM'},
+        {title: 'General Topology', value: 'GN'},
+        {title: 'Group Theory', value: 'GR'},
+        {title: 'Geometric Topology', value: 'GT'},
+        {title: 'History and Overview', value: 'HO'},
+        {title: 'Information Theory', value: 'IT'},
+        {title: 'K-Theory and Homology', value: 'KT'},
+        {title: 'Logic', value: 'LO'},
+        {title: 'Metric Geometry', value: 'MG'},
+        {title: 'Mathematical Physics', value: 'MP'},
+        {title: 'Numerical Analysis', value: 'NA'},
+        {title: 'Number Theory', value: 'NT'},
+        {title: 'Operator Algebras', value: 'OA'},
+        {title: 'Optimization and Control', value: 'OC'},
+        {title: 'Probability', value: 'PR'},
+        {title: 'Quantum Algebra', value: 'QA'},
+        {title: 'Rings and Algebras', value: 'RA'},
+        {title: 'Representation Theory', value: 'RT'},
+        {title: 'Symplectic Geometry', value: 'SG'},
+        {title: 'Spectral Theory', value: 'SP'},
+        {title: 'Statistics', value: 'ST'}
+    ],
+    'nlin': [
+        {title: 'Adaptation and Self-Organizing Systems', value: 'AO'},
+        {title: 'Chaotic Dynamics', value: 'CD'},
+        {title: 'Cellular Automata and Lattice Gases', value: 'CG'},
+        {title: 'Pattern Formation and Solitons', value: 'PS'},
+        {title: 'Exactly Solvable and Integrable Systems', value: 'SI'}
+    ],
+    'nucl-ex': [],
+    'nucl-th': [],
+    'physics': [
+        {title: 'Accelerator Physics', value: 'acc-ph'},
+        {title: 'Atmospheric and Oceanic Physics', value: 'ao-ph'},
+        {title: 'Atomic and Molecular Clusters', value: 'atm-clus'},
+        {title: 'Atomic Physics', value: 'atom-ph'},
+        {title: 'Biological Physics', value: 'bio-ph'},
+        {title: 'Chemical Physics', value: 'chem-ph'},
+        {title: 'Classical Physics', value: 'class-ph'},
+        {title: 'Computational Physics', value: 'comp-ph'},
+        {title: 'Data Analysis; Statistics and Probability', value: 'data-an'},
+        {title: 'Physics Education', value: 'ed-ph'},
+        {title: 'Fluid Dynamics', value: 'flu-dyn'},
+        {title: 'General Physics', value: 'gen-ph'},
+        {title: 'Geophysics', value: 'geo-ph'},
+        {title: 'History of Physics', value: 'hist-ph'},
+        {title: 'Instrumentation and Detectors', value: 'ins-det'},
+        {title: 'Medical Physics', value: 'med-ph'},
+        {title: 'Optics', value: 'optics'},
+        {title: 'Plasma Physics', value: 'plasm-ph'},
+        {title: 'Popular Physics', value: 'pop-ph'},
+        {title: 'Physics and Society', value: 'soc-ph'},
+        {title: 'Space Physics', value: 'space-ph'}
+    ],
+    'q-bio': [
+        {title: 'Biomolecules', value: 'BM'},
+        {title: 'Cell Behavior', value: 'CB'},
+        {title: 'Genomics', value: 'GN'},
+        {title: 'Molecular Networks', value: 'MN'},
+        {title: 'Neurons and Cognition', value: 'NC'},
+        {title: 'Other', value: 'OT'},
+        {title: 'Populations and Evolution', value: 'PE'},
+        {title: 'Quantitative Methods', value: 'QM'},
+        {title: 'Subcellular Processes', value: 'SC'},
+        {title: 'Tissues and Organs', value: 'TO'}
+    ],
+    'quant-ph': [],
+    'stat': [
+        {title: 'Applications', value: 'AP'},
+        {title: 'Computation', value: 'CO'},
+        {title: 'Methodology', value: 'ME'},
+        {title: 'Machine Learning', value: 'ML'},
+        {title: 'Theory', value: 'TH'}
+    ],
+};
 
 //--------------------
 
@@ -261,7 +261,7 @@ router.get('/ping', function(req, res) {
     res.status(200).send("pong!");
 });
 
-router.get('/public_articles/:article_id', function(req, res) {
+router.get('/public_articles/view/:article_id', function(req, res) {
     var context = {};
     var article_id = req.params.article_id;
     console.log("Article id", article_id);
@@ -269,7 +269,9 @@ router.get('/public_articles/:article_id', function(req, res) {
     ArxivArticle.findOneAndUpdate({
         arxiv_id: article_id
     }, {
-        views: 1
+        $inc: {
+            views: 1
+        }
     }, function(err, article) {
         if (err) throw err;
 
@@ -300,7 +302,7 @@ router.get('/public_articles/:article_id', function(req, res) {
     }); // findOne ends
 });
 
-router.post('/public_articles/:article_id', function(req, res) {
+router.post('/public_articles/view/:article_id', function(req, res) {
     // TODO: This needs to handle adding of comments via POST request
     var context = {};
     var article_id = req.params.article_id;
@@ -356,30 +358,91 @@ router.post('/public_articles/:article_id', function(req, res) {
 
 router.get("/public_articles", function(req, res) {
     var context = {};
+    var popular_articles = [], recently_reviewed_articles = [];
+    
+    // List of categories for dropdown
     context['categories'] = categories;
 
-    res.render("public_articles",context);
+    ArxivArticle.find({}).sort('-views').limit(10).exec(function(err, results) {
+        if (!err) {
+            console.log("Popular articles:",results);
+            ArxivArticle.find({}).sort('-last_commented_at').limit(10).exec(function(err1, results1) {
+                if (!err1) {
+                    console.log("Recently reviewed articles:",results1);
+                    for (var i=0; i<results.length; i++) {
+                        var temp = {};
+                        temp.id = results[i].arxiv_id;
+                        temp.title = results[i].title;
+                        temp.author_names = results[i].authors.map(function(a) {
+                            return a.name;
+                        }).join(", ");
+                        temp.publish_date = results[i].published_at.toDateString();
+                        popular_articles.push(temp);
+                    }
+
+                    for (i=0; i<results1.length; i++) {
+                        var temp = {};
+                        temp.id = results1[i].arxiv_id;
+                        temp.title = results1[i].title;
+                        recently_reviewed_articles.push(temp);
+                    }
+
+                    console.log("\n\nPop Art:",popular_articles);
+                    console.log("\n\nRec Art:",recently_reviewed_articles);
+                    context.popular_articles = popular_articles;
+                    context.recently_reviewed_articles = recently_reviewed_articles;
+
+                    res.render("public_articles", context);
+                } else {
+                    console.log("Error getting recently reviewed articles.");
+                }
+            });         
+        } else {
+            console.log("Error getting popular articles.");
+        }
+    });
 });
 
 router.post("/public_articles", function(req, res) {
     var context = {};
     var search_term = req.body.search_term;
+    
+    // List of categories for dropdown
+    context['categories'] = categories;
 
-    res.redirect('/public_articles/search/'+ search_term.replace(/ /g,'+') +'?p=1')
+    res.redirect('/public_articles/search?q='+ search_term.replace(/ /g,'+') +'&p=1')
 });
 
-router.get("/public_articles/search/:search_term", function(req, res) {
+router.get("/public_articles/search", function(req, res) {
     var context = {};
-    var search_term = req.params.search_term.replace(/\+/g,' ');
-    var page = 1, cat = null, subCat = null;
-    var arxiv_query = search_term;
+    var search_term, base_url, page = 1, cat = null, subCat = null;
+    
+    // List of categories for dropdown
+    context['categories'] = categories;
 
-    if(req.query.p)
-        page = parseInt(req.query.p);
-    if(req.query.cat) 
+    // Base URL for constructing URL of the different pages of search results
+    base_url = "/public_articles/search?";
+
+    if(req.query.q) {
+       base_url += "q=" + req.query.q;
+       search_term = req.query.q.replace(/\+/g,' ');
+       // search_term = decodeURIComponent(search_term);
+    }
+
+    if(req.query.cat) {
+        base_url += "&cat=" + req.query.cat;
         cat = decodeURIComponent(req.query.cat);
-    if(req.query.subcat)
+    }
+    
+    if(req.query.subcat) {
+        base_url += "&subcat=" + req.query.subcat;
         subCat = decodeURIComponent(req.query.subcat);
+    }
+    
+    if(req.query.p)
+       page = parseInt(req.query.p);
+
+    var arxiv_query = search_term;
 
     if (cat && subCat)
         arxiv_query += " cat:" + cat + "." + subCat;
@@ -392,43 +455,35 @@ router.get("/public_articles/search/:search_term", function(req, res) {
         console.log("Search result",result);
         context.count = result.count;
         context.search_results = result.results;
-        context.search_term = search_term;
-        context.search_term_safe = search_term.replace(' ','+');
+        if(search_term) {
+            context.search_term = search_term;
+            context.search_term_safe = search_term.replace(' ','+');
+        }
         context.page_number = page;
         context.pages = [];
         context.previous = context.page_number === 1? false:true;
         context.next = total_pages - context.page_number >= 10? false:true;
         context.previous_page = context.page_number - 1;
+        context.previous_page_url = base_url + "&p=" + context.previous_page;
         context.next_page = context.page_number + 1;
+        context.next_page_url = base_url + "&p=" + context.next_page;
         var total_pages = context.count/10;
         if(total_pages-context.page_number+1 >= 10)
         {
             for(i=context.page_number; i<context.page_number+10; i++)
             {
-                var page_url = '/public_articles/search/'+ search_term.replace(/ /g,'+') +'?p='+i;
-                if (cat)
-                    page_url += '&cat='+encodeURIComponent(cat);
-                if (subCat)
-                    page_url += '&subcat='+encodeURIComponent(subCat);
-
                 context.pages.push({
                     number: i,
-                    link: page_url
+                    link: base_url + "&p=" + i
                 });
             }
         }
         else {
             for(i=context.page_number; i<total_pages-context.page_number+1; i++)
             {
-                var page_url = '/public_articles/search/'+ search_term.replace(/ /g,'+') +'?p='+i;
-                if (cat)
-                    page_url += '&cat='+encodeURIComponent(cat);
-                if (subCat)
-                    page_url += '&subcat='+encodeURIComponent(subCat);
-
                 context.pages.push({
                     number: i,
-                    link: page_url
+                    link: base_url + "&p=" + i
                 });
             }
         }

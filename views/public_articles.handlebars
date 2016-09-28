@@ -57,14 +57,18 @@
     <section id="blog-details" class="padding-top">
         <div class="container">
             <div class="left-panel col-md-2 col-sm-2">
-                <h2>Filter</h2>
+                <h2>Browse by Category</h2>
                 <select id="dropdown-cat">
-                    <option>Select Category</option>
+                    <option value="base">Select Category</option>
+                    {{# each categories }}
+                    <option value="{{ value }}">{{ title }}</option>
+                    {{/each}}
+
                 </select>
                 <select id="dropdown-subcat" class="hidden">
-                    <option>Sub-Category</option>
+                    <option value="base">Sub-Category</option>
                 </select><br/>
-                <input type="submit" value="Filter" class="btn btn-submit disabled"><br/>
+                <input id="filter-button" type="submit" value="Filter" class="btn btn-submit disabled"><br/>
             </div>
             <div class="center-panel col-md-8 col-sm-8">
                 <div class="row">
@@ -84,11 +88,22 @@
                 <div class="row">
                     <div class="col-md-12 col-sm-12">
                         <br>
+                        {{#if popular_articles}}
+                            <h2>Popular Articles</h2>
+                            {{#each popular_articles}}
+                            <div class="search-result">
+                                <a href="/public_articles/view/{{id}}"><h3>{{title}}</h3></a>
+                                <p>Authors: {{author_names}}</p>
+                                <p>Published: {{publish_date}}</p>
+                            </div>
+                            {{/each}}
+                        {{/if}}
+
                         {{#if search_results}}
                             <h2>Search results</h2>
                             {{#each search_results}}
                             <div class="search-result">
-                                <a href="/public_articles/{{id}}"><h3>{{title}}</h3></a>
+                                <a href="/public_articles/view/{{id}}"><h3>{{title}}</h3></a>
                                 <p>Authors: {{authors}}</p>
                                 <p>Published: {{published_at}}</p>
                             </div>
@@ -99,7 +114,7 @@
                               <ul class="pagination">
                                 <li>
                                   {{#if previous}}
-                                  <a href="/public_articles/search/{{search_term_safe}}?p={{previous_page}}" aria-label="Previous">
+                                  <a href="{{previous_page_url}}" aria-label="Previous">
                                   {{else}}
                                   <a href="#" aria-label="Previous">
                                   {{/if}}
@@ -112,7 +127,7 @@
                                 {{/each}}
                                 <li>
                                     {{#if next}}
-                                    <a href="/public_articles/search/{{search_term_safe}}?p={{next_page}}" aria-label="Previous">
+                                    <a href="{{next_page_url}}" aria-label="Previous">
                                     {{else}}
                                     <a href="#" aria-label="Next">
                                     {{/if}}
@@ -129,18 +144,13 @@
             </div>
             <div class="right-panel col-md-2 col-sm-2">
                 <h2>Recently Reviewed</h2>
-                <ul>
-                    <li>Some article</li>
-                    <li>Some article</li>
-                    <li>Some article</li>
-                    <li>Some article</li>
-                    <li>Some article</li>
-                    <li>Some article</li>
-                    <li>Some article</li>
-                    <li>Some article</li>
-                    <li>Some article</li>
-                    <li>Some article</li>
+                {{#if recently_reviewed_articles}}
+                <ul class="recently-reviewed-articles">
+                    {{#each recently_reviewed_articles}}
+                    <li><a href="/public_articles/view/{{id}}">{{title}}</a></li>
+                    {{/each}}
                 </ul>
+                {{/if}}
             </div>
         </div>
     </section>
@@ -163,6 +173,7 @@
         </div>
     </footer>
     <!--/#footer-->
+    <script type="text/javascript" src="/javascripts/script.js"></script>
     <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
       tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
