@@ -296,7 +296,7 @@ router.get('/public_articles/view/:article_id', function(req, res) {
             res.render('arxiv_article', context);
         } else {
             arxiv.fetchArticle(article_id, function() {
-                res.redirect("/public_articles/" + article_id);
+                res.redirect("/public_articles/view/" + article_id);
             });
         }
     }); // findOne ends

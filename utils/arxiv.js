@@ -5,7 +5,12 @@ var ArxivArticle = require("../models/arxiv_article");
 module.exports = {
     fetchArticle: function(id, callback) {
             var xml, article, result;
-            var arxiv_url = "http://export.arxiv.org/api/query?id_list=" + id;
+            var arxiv_url = "http://export.arxiv.org/api/query?id_list=";
+
+            if(id.indexOf('_') == -1)
+                arxiv_url += id;
+            else
+                arxiv_url += id.replace('_','/')
 
             request(arxiv_url, function(err, resp, body) {
                 if (!err && resp.statusCode == 200) {
@@ -19,11 +24,22 @@ module.exports = {
                             console.log("Parsed XML to json");
                             article = res.feed.entry;
                             console.log("JSON:\n",JSON.stringify(article),"\n");
+
+                            // Check if the article has old identifier format
+                            var arxiv_id_regex_match = article.id.match(/http[s]?\:\/\/arxiv\.org\/abs\/([a-zA-Z\-\.]+)\/(\d{7,})(v\d+)?/);
+                            var new_article_arxiv_id;
+
+                            if (arxiv_id_regex_match) {
+                                new_article_arxiv_id = arxiv_id_regex_match[1] + '_' + arxiv_id_regex_match[2];
+                            } else {
+                                new_article_arxiv_id = article.id.split('/').pop().split('v')[0];
+                            }
+
                             result = {
                                 title: article.title,
+                                arxiv_id: new_article_arxiv_id,
                                 summary: article.summary,
                                 arxiv_url: article.id,
-                                arxiv_id: article.id.split('/').pop().split('v')[0],
                                 published_at: new Date(article.published),
                                 arxiv_category: article['arxiv:primary_category'].$.term,
                                 authors: [],
@@ -100,9 +116,17 @@ module.exports = {
 
                         for(var i in articles)
                         {
-                            var temp = {};
+                            var temp = {}, temp_id;
+                            temp_id = articles[i].id;
+                            var arxiv_id_regex_match = temp_id.match(/http[s]?\:\/\/arxiv\.org\/abs\/([a-zA-Z\-\.]+)\/(\d{7,})(v\d+)?/);
+
+                            if (arxiv_id_regex_match) {
+                                temp.id = arxiv_id_regex_match[1] + '_' + arxiv_id_regex_match[2];
+                            } else {
+                                temp.id = articles[i].id.split('/').pop().split('v')[0];
+                            }
+
                             temp.title = articles[i].title.replace('\n','');
-                            temp.id = articles[i].id.split('/').pop().split('v')[0];
                             temp.published_at = new Date(articles[i].published).toDateString();
                             if (!Array.isArray(articles[i].author))
                             {
