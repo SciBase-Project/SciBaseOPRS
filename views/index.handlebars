@@ -40,22 +40,116 @@
     </header>
     <!--/#header-->
 
-    <section id="page-breadcrumb">
-  	<div class="vertical-center sun">
-	    <div class="container">
-	       <div class="row">
-	       	   <div class="action">
-		      <div class="col-sm-12">
-		         <h1 class="title">Open Peer Review System</h1>
-			 <p>Read and review public articles</p>
-		     </div>
-		   </div>
-	       </div>
-	    </div>
-	 <div>
+    <section id ="first-view">
+    	<div class="oprs-home view-filler container-fluid col-sm-12">
+       <!-- <div class="col-sm-12 text-center">
+           <h1 class="title">Open Peer Review System</h1>
+  	       <h2>Read | Write | Review</h2>
+        </div> -->
+
+         <div class="oprs-info col-sm-offset-2 col-sm-8 col-xs-12 text-center">
+              <h1>SciBase Open Peer Review</h1>
+              <p>
+
+                  The Open Peer Review (OPR) is an open and transparent framework that allows the community to engage in positive scientific discussion/critique about existing research work in the scientific domain. Users can host their work independenty or choose to discuss existing content fetched from ArXiv.
+              </p>
+              <div class="col-sm-12 text-center">
+                <a href="/login" class="btn btn-common">Login</a>
+                <a href="/register" class="btn btn-common">Register</a>
+              </div>
+          </div>
+      </div>
+    </section>
+    <section id = "second-view">
+      <div class="col-sm-12 data-stats">
+          <div class="col-sm-4 text-center wow slideInLeft center-block" data-wow-duration="1s" data-wow-delay="300ms">
+            <div class="stat-body">
+              <h1 class="timer bold" data-to="20" data-speed="3000" data-from="0"></h1>
+            </div>
+            <div class="stat-text">
+              <h2>Categories</h2>
+            </div>
+            <!-- <a href="#" class="btn btn-common">Contribute</a> -->
+          </div>
+          <div class="col-sm-4 text-center wow bounceIn center-block" data-wow-duration="1s" data-wow-delay="300ms">
+            
+            <div class="stat-body">
+              <h1 class="timer bold" data-to="99" data-speed="3000" data-from="0"></h1>
+            </div>  
+            <div class="stat-text">
+              <h2>Reviews</h2>
+            </div>       
+            <!--<a href="#" class="btn btn-common"></a> -->
+            
+          </div>
+          <div class="col-sm-4 text-center wow slideInRight center-block" data-wow-duration="1s" data-wow-delay="300ms">
+            <div class="stat-body">
+              <h1 class="timer bold" data-to="99" data-speed="3000" data-from="0"></h1>
+            </div>   
+            <div class="stat-text">
+              <h2>Users</h2>
+            </div>   
+            <!-- <a href="#" class="btn btn-common">Join</a>   -->
+          </div>
+      </div>
+    </section>
+    </div>
+    
+
+    <section id ="third-view">
+      <div class="col-sm-12 text-center container">
+          <div class="col-sm-12">
+              <h2>Services</h2>
+          </div>
+          <div class="col-sm-12 services">
+
+              <div class="col-sm-4">
+                <center>
+                  <div class="service-holder container center-block  wow bounceIn" data-wow-duration="1s" data-wow-delay="300ms">
+                    <h3>Public Articles</h3>
+                    <div class="col-sm-12">
+                        <span class="glyphicon glyphicon-cloud gly-filler"></span>
+                    </div>
+                    <div class="col-sm-12">
+                        <p>Search and study the articles and journals people write. Search among various categories and have updates regarding recent searches.</p>
+                    </div>
+                  </div>
+                </center>
+              </div>
+
+              <div class="col-sm-4">
+                <center>
+                  <div class="service-holder container  wow bounceIn" data-wow-duration="1s" data-wow-delay="300ms">
+                    <h3>User Articles</h3>
+                    <div class="col-sm-12">
+                        <span class="glyphicon glyphicon-pencil gly-filler"></span>
+                    </div>
+                    <div class="col-sm-12">
+                        <p>Have something to share? Write articles and share with people to spread knowledge!</p>
+                    </div>
+                  </div>
+                </center>
+              </div>
+
+              <div class="col-sm-4">
+                <center>
+                  <div class="service-holder container  wow bounceIn" data-wow-duration="1s" data-wow-delay="300ms">
+                    <h3 class="bold">Others</h3>
+                    <div class="col-sm-12">
+                        <span class="glyphicon glyphicon-comment gly-filler"></span>
+                    </div>
+                    <div class="col-sm-12">
+                        <p>Review various articles spread among diffrent categories and give them your own review!</p>
+                    </div>
+                  </div>
+                </center>
+              </div>
+          </div>
+      </div>
     </section>
 
-    <section id="welcome-details">
+   <!--
+    <section id="welcome-details" class="col-sm-12">
       <div class="col-sm-12 text-center">
      	{{#if user}}
     	<h1>Welcome {{user.username}} (<a href="/logout">Logout</a>)</h3>
@@ -73,14 +167,52 @@
      	 {{/unless}}
       </div>
     </section>
+    -->
+
+
+    <footer id="footer" class="col-sm-12">
+        <div>
+            <div class="row">
+                <div class="col-sm-12 text-center bottom-separator">
+                    <img src="/images/under.png" class="img-responsive inline" alt="">
+                </div>
+                <div class="col-sm-12" style="margin-top:50px">
+                    <div class="copyright-text text-center">
+                        <p>© SciBase | PES Institute of Technology - Bangalore South Campus. All Rights Reserved.</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!--/#footer-->
 </div>
-<script src="/javascripts/jquery.js"></script>
-<script src = "/javascripts/bootstrap.min.js"></script>
-<script src = "/javascripts/main.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.countTo.js"></script>
 <script>
-$(document).ready(function(){
-	$(".fa-search").click(function(){
-		$(".field-toggle").toggle(500);
-	});
-});
+  $(document).ready(function(){
+
+    $('.timer').each(count);
+    function count(options) {
+        var $this = $(this);
+        options = $.extend({}, options || {}, $this.data('countToOptions') || {});
+        $this.countTo(options);
+    }
+
+    var wow = new WOW(
+    {
+      boxClass:     'wow',      // animated element css class (default is wow)
+      animateClass: 'animated', // animation css class (default is animated)
+      offset:       0,          // distance to the element when triggering the animation (default is 0)
+      mobile:       true,       // trigger animations on mobile devices (default is true)
+      live:         true,       // act on asynchronously loaded content (default is true)
+      callback:     function(box) {
+        // the callback is fired every time an animation is started
+        // the argument that is passed in is the DOM node being animated
+      },
+      scrollContainer: null // optional scroll container selector, otherwise use window
+    }
+  );
+  wow.init();
+  });
+  
 </script>

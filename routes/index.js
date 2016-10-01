@@ -179,6 +179,7 @@ router.get('/', function(req, res) {
         user: req.user,
         layout: 'main'
     });
+     
 });
 
 router.get('/register', function(req, res) {

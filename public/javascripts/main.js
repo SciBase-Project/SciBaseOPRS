@@ -36,6 +36,15 @@ $(window, document, undefined).ready(function() {
     $( "#universityInput" ).autocomplete({
       source: data
     });
+
+   /* $('.timer').each(count);
+    function count(options) {
+      var $this = $(this);
+      //options = $.extend({}, options || {}, $this.data('countToOptions') || {});
+      $this.countTo();
+  }*/
+  
+
   });
 
   // $("#login_page button.login_button").click(function(){
