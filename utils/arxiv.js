@@ -113,32 +113,57 @@ module.exports = {
                     if(!err1) {
                         var articles = res.feed.entry;
                         result_object.count = parseInt(res.feed['opensearch:totalResults']._);
-
-                        for(var i in articles)
-                        {
-                            var temp = {}, temp_id;
-                            temp_id = articles[i].id;
-                            var arxiv_id_regex_match = temp_id.match(/http[s]?\:\/\/arxiv\.org\/abs\/([a-zA-Z\-\.]+)\/(\d{7,})(v\d+)?/);
+                    
+                        if(!Array.isArray(articles)) {
+                            var temp = {}, temp_id, arxiv_id_regex_match;
+                            temp_id = articles.id;
+                            arxiv_id_regex_match = temp_id.match(/http[s]?\:\/\/arxiv\.org\/abs\/([a-zA-Z\-\.]+)\/(\d{7,})(v\d+)?/);
 
                             if (arxiv_id_regex_match) {
                                 temp.id = arxiv_id_regex_match[1] + '_' + arxiv_id_regex_match[2];
                             } else {
-                                temp.id = articles[i].id.split('/').pop().split('v')[0];
+                                temp.id = articles.id.split('/').pop().split('v')[0];
                             }
 
-                            temp.title = articles[i].title.replace('\n','');
-                            temp.published_at = new Date(articles[i].published).toDateString();
-                            if (!Array.isArray(articles[i].author))
+                            temp.title = articles.title.replace('\n','');
+                            temp.published_at = new Date(articles.published).toDateString();
+                            if (!Array.isArray(articles.author))
                             {
-                                temp.authors = articles[i].author.name;
+                                temp.authors = articles.author.name;
                             } else {
-                                temp.authors = articles[i].author.map(function(a) {
+                                temp.authors = articles.author.map(function(a) {
                                     return a.name;
                                 }).join(', ');
                             }
 
                             results.push(temp);
                             result_object.results = results;
+                        } else {
+                            for(var i in articles) {
+                                var temp = {}, temp_id, arxiv_id_regex_match;
+                                temp_id = articles[i].id;
+                                arxiv_id_regex_match = temp_id.match(/http[s]?\:\/\/arxiv\.org\/abs\/([a-zA-Z\-\.]+)\/(\d{7,})(v\d+)?/);
+
+                                if (arxiv_id_regex_match) {
+                                    temp.id = arxiv_id_regex_match[1] + '_' + arxiv_id_regex_match[2];
+                                } else {
+                                    temp.id = articles[i].id.split('/').pop().split('v')[0];
+                                }
+
+                                temp.title = articles[i].title.replace('\n','');
+                                temp.published_at = new Date(articles[i].published).toDateString();
+                                if (!Array.isArray(articles[i].author))
+                                {
+                                    temp.authors = articles[i].author.name;
+                                } else {
+                                    temp.authors = articles[i].author.map(function(a) {
+                                        return a.name;
+                                    }).join(', ');
+                                }
+
+                                results.push(temp);
+                                result_object.results = results;
+                            }
                         }
 
                     } else {
