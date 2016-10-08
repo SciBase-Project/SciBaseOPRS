@@ -54,9 +54,22 @@
                   The Open Peer Review (OPR) is an open and transparent framework that allows the community to engage in positive scientific discussion/critique about existing research work in the scientific domain. Users can host their work independenty or choose to discuss existing content fetched from ArXiv.
               </p>
               <div class="col-sm-12 text-center">
-                <a href="/login" class="btn btn-common">Login</a>
-                <a href="/register" class="btn btn-common">Register</a>
+                <!--<a href="/login" class="btn btn-common">Login</a>
+                <a href="/register" class="btn btn-common">Register</a>-->
+                <div>
+                    <h2 class="post-title center">Search for articles by title, keywords or author name.</h2>
+                    <br>
+                    <form method="POST" action="/public_articles">
+                        <div class="form-group col-md-9 col-sm-12">
+                            <input name="search_term" id="search_term" class="form-control" type="text" value="{{search_term}}" placeholder="Enter search terms..."></input>
+                        </div>
+                        <div class="form-group col-md-3 col-sm-12">
+                            <input class="btn btn-submit" type="submit" value="Search"></input>
+                        </div>
+                    </form>
+                </div>
               </div>
+
           </div>
       </div>
     </section>
@@ -103,9 +116,9 @@
           </div>
           <div class="col-sm-12 services">
 
-              <div class="col-sm-4">
-                <center>
-                  <div class="service-holder container center-block  wow bounceIn" data-wow-duration="1s" data-wow-delay="300ms">
+              <div class="col-sm-6">
+                
+                  <div class="service-holder pull-right container center-block  wow bounceIn" data-wow-duration="1s" data-wow-delay="300ms">
                     <h3>Public Articles</h3>
                     <div class="col-sm-12">
                         <span class="glyphicon glyphicon-cloud gly-filler"></span>
@@ -113,13 +126,18 @@
                     <div class="col-sm-12">
                         <p>Search and study the articles and journals people write. Search among various categories and have updates regarding recent searches.</p>
                     </div>
+
+                    <div class="col-sm-12 btn-contain text-center">
+                      <a href="/public_articles" class="btn btn-primary">Browse Articles</a>
+                    </div>
+
                   </div>
-                </center>
+                
               </div>
 
-              <div class="col-sm-4">
+              <div class="col-sm-6">
                 <center>
-                  <div class="service-holder container  wow bounceIn" data-wow-duration="1s" data-wow-delay="300ms">
+                  <div class="service-holder pull-left container  wow bounceIn" data-wow-duration="1s" data-wow-delay="300ms">
                     <h3>User Articles</h3>
                     <div class="col-sm-12">
                         <span class="glyphicon glyphicon-pencil gly-filler"></span>
@@ -127,13 +145,16 @@
                     <div class="col-sm-12">
                         <p>Have something to share? Write articles and share with people to spread knowledge!</p>
                     </div>
+                    <div class="col-sm-12 btn-contain text-center">
+                      <a href="#" class="btn btn-primary">Coming Soon</a>
+                    </div>
                   </div>
                 </center>
-              </div>
+              </div> 
 
-              <div class="col-sm-4">
-                <center>
-                  <div class="service-holder container  wow bounceIn" data-wow-duration="1s" data-wow-delay="300ms">
+             <!-- <div class="col-sm-6">
+                
+                  <div class="service-holder pull-left container  wow bounceIn" data-wow-duration="1s" data-wow-delay="300ms">
                     <h3 class="bold">Others</h3>
                     <div class="col-sm-12">
                         <span class="glyphicon glyphicon-comment gly-filler"></span>
@@ -141,9 +162,12 @@
                     <div class="col-sm-12">
                         <p>Review various articles spread among diffrent categories and give them your own review!</p>
                     </div>
+                    <div class="col-sm-12 btn-contain text-center">
+                      <a href="#" class="btn btn-common">View</a>
+                    </div>
                   </div>
-                </center>
-              </div>
+                
+              </div> -->
           </div>
       </div>
     </section>
