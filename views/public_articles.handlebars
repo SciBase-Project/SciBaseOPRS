@@ -58,18 +58,33 @@
     <section id="blog-details" class="padding-top">
         <div class="container">
             <div class="left-panel col-md-2 col-sm-2">
-                <h2>Browse by Category</h2>
+                <h2>Filter Results</h2>
                 <select id="dropdown-cat">
                     <option value="base">Select Category</option>
                     {{# each categories }}
                     <option value="{{ value }}">{{ title }}</option>
                     {{/each}}
-
                 </select>
                 <select id="dropdown-subcat" class="hidden">
                     <option value="base">Sub-Category</option>
                 </select><br/>
-                <input id="filter-button" type="submit" value="Filter" class="btn btn-submit disabled"><br/>
+                <input id="text-author" type="text" placeholder="Author" value=""><br/>
+                <input id="filter-button" type="submit" value="Filter" class="btn btn-submit"><br/>
+
+                <h2>Sort Results</h2>
+                <select id="dropdown-sort-by">
+                    <option value="base">Sort by</option>
+                    <option value="submitted_date">Submitted date</option>
+                    <option value="updated_date">Updated date</option>
+                    <option value="relevance">Relevance</option>
+                </select>
+                <select id="dropdown-order" class="hidden">
+                    <option value="base">Sort order</option>
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+                <br />
+                <input id="sort-button" type="submit" value="Sort" class="btn btn-submit"><br/>
             </div>
             <div class="center-panel col-md-8 col-sm-8">
                 <div class="row">

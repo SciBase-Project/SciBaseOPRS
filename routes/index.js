@@ -416,7 +416,8 @@ router.post("/public_articles", function(req, res) {
 
 router.get("/public_articles/search", function(req, res) {
     var context = {};
-    var search_term, base_url, page = 1, cat = null, subCat = null;
+    var search_term, base_url, page = 1, cat = null, subCat = null, author = null;
+    var sortBy = null, sortOrder = null;
     
     // List of categories for dropdown
     context['categories'] = categories;
@@ -430,6 +431,12 @@ router.get("/public_articles/search", function(req, res) {
        // search_term = decodeURIComponent(search_term);
     }
 
+    if(req.query.a) {
+        base_url += "&a=" + req.query.a;
+        author = decodeURIComponent(req.query.a);
+        author = author.replace(/\+/g, ' ');
+    }   
+
     if(req.query.cat) {
         base_url += "&cat=" + req.query.cat;
         cat = decodeURIComponent(req.query.cat);
@@ -440,15 +447,47 @@ router.get("/public_articles/search", function(req, res) {
         subCat = decodeURIComponent(req.query.subcat);
     }
     
+    if(req.query.sort_by) {
+        base_url += "&sort_by=" + req.query.sort_by;
+        sortBy = decodeURIComponent(req.query.sort_by);
+    }
+
+    if(req.query.order) {
+        base_url += "&order=" + req.query.order;
+        sortOrder = decodeURIComponent(req.query.order);
+    }
+
     if(req.query.p)
        page = parseInt(req.query.p);
 
-    var arxiv_query = search_term;
+    var arxiv_query = 'all:"' + search_term + '"';
 
-    if (cat && subCat)
-        arxiv_query += " cat:" + cat + "." + subCat;
-    else if (cat)
+    if(cat && subCat) {
         arxiv_query += " cat:" + cat;
+        
+        if (subCat)
+            arxiv_query += "." + subCat;
+    }
+
+    if(author)
+        arxiv_query += ' au:"' + author + '"';
+
+    if(sortBy) {
+        if (sortBy === "submitted_date")
+            arxiv_query += "&sortBy=submittedDate";
+        else if (sortBy === "updated_date")
+            arxiv_query += "&sortBy=lastUpdatedDate";
+        else if (sortBy === "relevance")
+            arxiv_query += "&sortBy=relevance";
+        
+        if (sortOrder) {
+            if (sortOrder === "asc")
+                arxiv_query += "&sortOrder=ascending";
+            else if (sortOrder === "desc")
+                arxiv_query += "&sortOrder=descending";
+        }
+    }
+
 
     console.log("Search term:",search_term,"Page:",page);
 

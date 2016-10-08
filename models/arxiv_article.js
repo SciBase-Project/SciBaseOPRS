@@ -6,6 +6,7 @@ var ArxivArticle = new Schema({
     arxiv_id: {type: String, unique: true},
     arxiv_url: String,
     published_at: Date,
+    updated_at: Date,
     title: String,
     summary: String,
     authors: [{name: String, affiliation: String}],

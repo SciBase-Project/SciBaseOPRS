@@ -41,6 +41,7 @@ module.exports = {
                                 summary: article.summary,
                                 arxiv_url: article.id,
                                 published_at: new Date(article.published),
+                                updated_at: new Date(article.updated),
                                 arxiv_category: article['arxiv:primary_category'].$.term,
                                 authors: [],
                                 comments: []
