@@ -2856,10 +2856,11 @@ ul.recently-reviewed-articles li:last-child {
 }
 
 .data-stats{
-  margin: 20px;
+  margin: 0px 0px;
   padding: 20px 0px;
   background-image: url("../images/home/tour-bg.png");
   background-color:#fafafa;
+  background-size: contain;
   background-position:center;
   background-repeat: repeat;
 }
@@ -2876,7 +2877,7 @@ ul.recently-reviewed-articles li:last-child {
   font-size:40px;
 }
 .services{
-  margin-top:20px;
+  margin-top:30px;
   padding:20px 0px;
 }
 #third-view h2{
@@ -2884,17 +2885,23 @@ ul.recently-reviewed-articles li:last-child {
 }
 .services .service-holder{
   margin:10px;
-  padding:10px;
+  padding:10px 0px;
   border: 1px solid #00aeef;
   box-shadow: 0px 1px 1px #00afef;
-  height:290px;
+  height:320px;
   width:280px;
   font-weight: 500;
 }
 .services .service-holder h3{
   margin-bottom:50px;
 }
-
+.services .service-holder .btn-contain{
+  bottom:0;
+  position: absolute;
+  margin:0px;
+  padding:0px;
+  margin-bottom:10px;
+}
 .oprs-info
 {
   margin-top:20px;
