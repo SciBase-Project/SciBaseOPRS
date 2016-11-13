@@ -22,18 +22,12 @@
                         <li><a href="/">OPRS Home</a></li>
                         <li><a href="/public_articles">Public Articles</a></li>
                         <li><a href="#">User Articles</a></li>
+                        {{#if user }}
+                        <li><a href="/logout">Logout</a></li>
+                        {{else}}
                         <li><a href="/login">Login</a></li>
+                        {{/if}}
                     </ul> 
-                </div>
-               <div class="search">
-
-                        <i class="fa fa-search"></i>
-                 <!--   <form role="form">
-                        <i class="fa fa-search"></i>
-                        <div class="field-toggle" style="display:none">
-                            <input class="search-form" autocomplete="off" placeholder="Search" type="text">
-                        </div>
-                    </form> -->
                 </div>
             </div>
         </div>

@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
+var User = require("./user");
 
 var ArxivArticle = new Schema({
     article_id: Number,
@@ -10,7 +11,7 @@ var ArxivArticle = new Schema({
     title: String,
     summary: String,
     authors: [{name: String, affiliation: String}],
-    comments: [{name: String, text: String, email: String, created_at: { type: Date } }],
+    comments: [{name: String, orcid: String, text: String, user: {type: Schema.ObjectId, ref: 'User'}, created_at: { type: Date } }],
     arxiv_comments: String,
     arxiv_category: String,
     pdf_url: String,

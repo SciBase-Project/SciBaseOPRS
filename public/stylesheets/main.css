@@ -2933,3 +2933,11 @@ ul.recently-reviewed-articles li:last-child {
 #footer{
   margin-top:100px;
 }
+.login-text {
+  font-size: 22px;
+  line-height: 1.2em;
+}
+.login-btn-container {
+  margin-top: 20px;
+  margin-bottom: 100px;
+}

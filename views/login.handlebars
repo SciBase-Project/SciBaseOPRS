@@ -5,7 +5,6 @@
     <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/stylesheets/responsive.css" rel="stylesheet">
 
-<div id="login_page">
     <header id="header">
 
         <div class="navbar navbar-inverse" role="banner">
@@ -29,18 +28,12 @@
                         <li><a href="/">OPRS Home</a></li>
                         <li><a href="/public_articles">Public Articles</a></li>
                         <li><a href="#">User Articles</a></li>
+                        {{#if user }}
+                        <li><a href="/logout">Logout</a></li>
+                        {{else}}
                         <li><a href="/login">Login</a></li>
+                        {{/if}}
                     </ul>  
-                </div>
-               <div class="search">
-
-                        <i class="fa fa-search"></i>
-                 <!--   <form role="form">
-                        <i class="fa fa-search"></i>
-                        <div class="field-toggle" style="display:none">
-                            <input class="search-form" autocomplete="off" placeholder="Search" type="text">
-                        </div>
-                    </form> -->
                 </div>
             </div>
         </div>
@@ -48,42 +41,44 @@
     <!--/#header-->
 
     <section id="page-breadcrumb">
-  	<div class="vertical-center sun">
-	    <div class="container">
-	       <div class="row">
-	       	   <div class="action">
-		      <div class="col-sm-12 text-center">
-		         <h1 class="title">SciBase OPRS</h1>
-			 <h3>LOGIN</h3>
-			 <p></p>
-		     </div>
-		   </div>
-	       </div>
-	    </div>
-	 <div>
+        <div class="vertical-center sun">
+            <div class="container">
+                <div class="row">
+                    <div class="action">
+                        <div class="col-sm-12">
+                            <h1 class="title">Open Peer Review System - Login</h1>
+                            <p>Login to review articles and upload your own work</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <section id="login-details">
-      <div class="col-sm-12 text-center">
-	<form action="/login" method="POST">
-	  <div class="group">
-	    <input type="text" name="username" id="username"><span class="highlight"></span><span class="bar"></span>
-	    <label>Username</label>
-	  </div>
-	  <div class="group">
-	    <input type="password" name="password" id="password"><span class="highlight"></span><span class="bar"></span>
-	    <label>Password</label>
-	  </div>
-	  <button type="submit" class="button login_button buttonBlue">LOGIN
-	    <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
-	  </button>
-	  <div class="sign_up">
-	  	<a href="/register">Don't have an account? Click here to sign up.</a>
-	  </div>
-	</form>
-	{{#if message}}
-		{{ message }}
-	{{/if}}
-       </div>
-     </section>
-</div>
+    <section id ="first-view">
+        <div class="oprs-home view-filler container-fluid col-sm-12">
+            <div class="oprs-info col-sm-offset-2 col-sm-8 col-xs-12 text-center">
+                <p class="login-text">Login to OPRS to get a more involved experience. Logging in allows you to share your research papers and review papers published by others. We use <a href="http://orcid.org/">ORCID</a> for login and sign-up. To get started, login with your ORCID account.</p>
+                <div class="col-md-8 col-md-offset-2 col-sm-10 text-center login-btn-container">
+                    <a href="/auth/orcid/login" class="btn btn-submit btn-large">Login via ORCID</a>
+                </div>
+                {{#if message }}
+                <p>{{ message }}</p>
+                {{/if}}
+          </div>
+      </div>
+    </section>
+    <footer id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 text-center bottom-separator">
+                    <img src="/images/under.png" class="img-responsive inline" alt="">
+                </div>
+                <div class="col-sm-12" style="margin-top:50px">
+                    <div class="copyright-text text-center">
+                        <p>© SciBase | PES Institute of Technology - Bangalore South Campus. All Rights Reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
