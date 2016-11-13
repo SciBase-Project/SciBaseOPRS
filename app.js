@@ -29,6 +29,9 @@ process.on('uncaughtException', function (error) {
 // Set up express app
 var app = express();
 
+// Server static files from ./public directory
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Mongoose database connection
 var db = mongoose.connect('mongodb://localhost/oprs');
 
@@ -57,7 +60,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(flash());
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: config.sessionSecret,
   resave: true,
