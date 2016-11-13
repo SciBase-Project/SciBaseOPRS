@@ -4,6 +4,7 @@ var User = require('../models/user');
 var ArxivArticle = require('../models/arxiv_article');
 var arxiv = require("../utils/arxiv");
 var router = express.Router();
+var mongoose = require('mongoose');
 
 
 router.get('/', function(req, res) {
@@ -12,6 +13,40 @@ router.get('/', function(req, res) {
         user: req.user,
         layout: 'main'
     });
+     
+});
+var orcid = "";
+router.get('/complete-registration', function(req, res) {
+    orcid = req.user.orcid;
+    var email="";
+    User.findOne({ "orcid": orcid }, (err, user) => {
+        if (err) return cb(err);
+        console.log(user.email);
+        if(user.email){
+email = true;
+console.log("yes email")
+        };
+    });
+    if(email == false){
+                res.render('complete-registration', {
+                title: 'Complete-Registration | OPRS',
+                user : req.user,
+            });
+    }
+
+    res.redirect('/')
+     
+});
+router.post('/complete-registration', function(req, res) {
+    var email_id = req.body.email_id;
+User.findOneAndUpdate({
+    "orcid" : orcid
+},
+{"email":
+email_id
+}
+);
+    res.redirect('/');
      
 });
 

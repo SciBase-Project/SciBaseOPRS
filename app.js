@@ -93,6 +93,7 @@ const oauth2 = new OAuth2Strategy(
           } else {
             profile.orcid = params.orcid;
             profile.name = params.name;
+            profile.email = null;
             return cb(null, profile);
           }
         });
