@@ -7,90 +7,39 @@ var router = express.Router();
 var mongoose = require('mongoose');
 
 
-router.get('/', function(req, res) {
+router.get('/', function (req, res) {
     res.render('index', {
         title: 'SciBase OPRS',
         user: req.user,
         layout: 'main'
     });
-     
+
 });
-var orcid = "";
-router.get('/complete-registration', function(req, res) {
-    orcid = req.user.orcid;
-    var email="";
-    User.findOne({ "orcid": orcid }, (err, user) => {
-        if (err) return cb(err);
-        console.log(user.email);
-        if(user.email){
-email = true;
-console.log("yes email")
-        };
-    });
-    if(email == false){
-                res.render('complete-registration', {
-                title: 'Complete-Registration | OPRS',
-                user : req.user,
-            });
+
+router.get('/complete-registration', function (req, res) {
+    let orcid = req.user.orcid;
+
+    if (req.user.email) {
+        res.redirect('/');
+    } else {
+        res.render('complete-registration', {
+            title: 'Complete Registration | SciBase OPRS',
+            user: req.user,
+        });
     }
-
-    res.redirect('/')
-     
 });
-router.post('/complete-registration', function(req, res) {
+
+router.post('/complete-registration', function (req, res) {
     var email_id = req.body.email_id;
-User.findOneAndUpdate({
-    "orcid" : orcid
-},
-{"email":
-email_id
-}
-);
-    res.redirect('/');
-     
+
+    User.findOneAndUpdate({ orcid: req.user.orcid }, { email: email_id }, (err, user) => {
+        if(err) next(err);
+        console.log("Email updated");
+        res.redirect('/');
+    });
 });
 
-// router.get('/register', function(req, res) {
-//     res.render('register', {
-//     	layout:'alt'
-//     });
-// });
-
-// router.post('/register', function(req, res, next) {
-//     if (req.body.password !== req.body.confirm_password) {
-//         return res.render("register", {
-//             info: "Passwords don't match. Try again.",
-//             layout: 'alt'
-//         });
-//     }
-//     Account.register(new Account({
-//         username: req.body.username,
-//         first_name: req.body.first_name,
-//         last_name: req.body.last_name,
-//         email: req.body.email,
-//         university: req.body.university,
-//         department: req.body.department
-//     }), req.body.password, function(err, account) {
-//         if (err) {
-//             return res.render("register", {
-//                 info: "Sorry. That username already exists. Try again.",
-//                 layout: 'alt'
-//             });
-//         }
-
-//         passport.authenticate('local')(req, res, function() {
-//             req.session.save(function(err) {
-//                 if (err) {
-//                     return next(err);
-//                 }
-//                 res.redirect('/');
-//             });
-//         });
-//     });
-// });
-
-
-router.get('/login', function(req, res) {
+router.get('/login', function (req, res) {
     res.render('login', {
         title: "Login - SciBase | OPRS",
         user: req.user,
@@ -98,21 +47,9 @@ router.get('/login', function(req, res) {
     });
 });
 
-// router.post('/login', passport.authenticate('local', {
-//     failureRedirect: '/login',
-//     failureFlash: true
-// }), function(req, res, next) {
-//     req.session.save(function(err) {
-//         if (err) {
-//             return next(err);
-//         }
-//         res.redirect('/');
-//     });
-// });
-
-router.get('/logout', function(req, res, next) {
+router.get('/logout', function (req, res, next) {
     req.logout();
-    req.session.save(function(err) {
+    req.session.save(function (err) {
         if (err) {
             return next(err);
         }
@@ -120,17 +57,17 @@ router.get('/logout', function(req, res, next) {
     });
 });
 
-router.get('/getSubCategories', function(req, res, next) {
+router.get('/getSubCategories', function (req, res, next) {
     var cat = req.query.category_id;
 
     res.send(arxiv.category_subcategory_mapping[cat]);
 });
 
-router.get('/ping', function(req, res) {
+router.get('/ping', function (req, res) {
     res.status(200).send("pong!");
 });
 
-router.get('/public_articles/view/:article_id', function(req, res) {
+router.get('/public_articles/view/:article_id', function (req, res) {
     var context = {};
     var article_id = req.params.article_id;
     console.log("Article id", article_id);
@@ -138,42 +75,42 @@ router.get('/public_articles/view/:article_id', function(req, res) {
     ArxivArticle.findOneAndUpdate({
         arxiv_id: article_id
     }, {
-        $inc: {
-            views: 1
-        }
-    }, function(err, article) {
-        if (err) throw err;
+            $inc: {
+                views: 1
+            }
+        }, function (err, article) {
+            if (err) next(err);
 
-        if (article) {
-            console.log("Number of views:", article.views);
+            if (article) {
+                console.log("Number of views:", article.views);
 
-            // console.log("Found article\n", article);
-            context.title = article.title;
-            context.author_names = article.authors.map(function(a) {
-                return a.name;
-            }).join(", ");
-            context.publish_date = article.published_at.toDateString();
-            context.arxiv_url = article.arxiv_url;
-            context.pdf_url = article.pdf_url;
-            context.arxiv_comments = article.arxiv_comments;
-            context.category_name = article.arxiv_category;
-            context.summary = article.summary;
-            context.comments = article.comments.map(function(c) {
-                c.created_at = c.created_at.toDateString();
-                return c;
-            });
-            context.user = req.user;
-            context.isAuthenticated = req.isAuthenticated();
-            res.render('arxiv_article', context);
-        } else {
-            arxiv.fetchArticle(article_id, function() {
-                res.redirect("/public_articles/view/" + article_id);
-            });
-        }
-    }); // findOne ends
+                // console.log("Found article\n", article);
+                context.title = article.title;
+                context.author_names = article.authors.map(function (a) {
+                    return a.name;
+                }).join(", ");
+                context.publish_date = article.published_at.toDateString();
+                context.arxiv_url = article.arxiv_url;
+                context.pdf_url = article.pdf_url;
+                context.arxiv_comments = article.arxiv_comments;
+                context.category_name = article.arxiv_category;
+                context.summary = article.summary;
+                context.comments = article.comments.map(function (c) {
+                    c.created_at = c.created_at.toDateString();
+                    return c;
+                });
+                context.user = req.user;
+                context.isAuthenticated = req.isAuthenticated();
+                res.render('arxiv_article', context);
+            } else {
+                arxiv.fetchArticle(article_id, function () {
+                    res.redirect("/public_articles/view/" + article_id);
+                });
+            }
+        }); // findOne ends
 });
 
-router.post('/public_articles/view/:article_id', function(req, res) {
+router.post('/public_articles/view/:article_id', function (req, res) {
     // TODO: This needs to handle adding of comments via POST request
     var context = {};
     var article_id = req.params.article_id;
@@ -181,23 +118,22 @@ router.post('/public_articles/view/:article_id', function(req, res) {
 
     if (req.isAuthenticated()) {
         // User is logged in
-        
+
         var newComment = {
             user: req.user._id,
-            orcid: req.user.orcid,            
+            orcid: req.user.orcid,
             name: req.user.name,
             text: req.body.message,
             created_at: new Date()
         };
-        console.log("New comment:",newComment);
+        console.log("New comment:", newComment);
 
         ArxivArticle.findOne({
             arxiv_id: article_id
-        }, function(err, article) {
-            if (err) throw err;
+        }, function (err, article) {
+            if (err) next(err);
 
-            if(article)
-            {
+            if (article) {
                 if (typeof article.comments == 'object') {
                     article.comments.push(newComment);
                 } else {
@@ -208,7 +144,7 @@ router.post('/public_articles/view/:article_id', function(req, res) {
                 article.save();
 
                 context.title = article.title;
-                context.author_names = article.authors.map(function(a) {
+                context.author_names = article.authors.map(function (a) {
                     return a.name;
                 }).join(", ");
                 context.publish_date = article.published_at.toDateString();
@@ -217,7 +153,7 @@ router.post('/public_articles/view/:article_id', function(req, res) {
                 context.arxiv_comments = article.arxiv_comments;
                 context.category_name = article.arxiv_category;
                 context.summary = article.summary;
-                context.comments = article.comments.map(function(c) {
+                context.comments = article.comments.map(function (c) {
                     c.created_at = c.created_at.toDateString();
                     return c;
                 });
@@ -235,42 +171,42 @@ router.post('/public_articles/view/:article_id', function(req, res) {
     }
 });
 
-router.get("/public_articles", function(req, res) {
+router.get("/public_articles", function (req, res) {
     var context = {};
     var popular_articles = [], recently_reviewed_articles = [];
-    
+
     // List of categories for dropdown
     context['categories'] = arxiv.categories;
 
     context.user = req.user;
     context.isAuthenticated = req.isAuthenticated();
 
-    ArxivArticle.find({}).sort('-views').limit(10).exec(function(err, results) {
+    ArxivArticle.find({}).sort('-views').limit(10).exec(function (err, results) {
         if (!err) {
-            console.log("Popular articles:",results);
-            ArxivArticle.find({}).sort('-last_commented_at').limit(10).exec(function(err1, results1) {
+            console.log("Popular articles:", results);
+            ArxivArticle.find({}).sort('-last_commented_at').limit(10).exec(function (err1, results1) {
                 if (!err1) {
-                    console.log("Recently reviewed articles:",results1);
-                    for (var i=0; i<results.length; i++) {
+                    console.log("Recently reviewed articles:", results1);
+                    for (var i = 0; i < results.length; i++) {
                         var temp = {};
                         temp.id = results[i].arxiv_id;
                         temp.title = results[i].title;
-                        temp.author_names = results[i].authors.map(function(a) {
+                        temp.author_names = results[i].authors.map(function (a) {
                             return a.name;
                         }).join(", ");
                         temp.publish_date = results[i].published_at.toDateString();
                         popular_articles.push(temp);
                     }
 
-                    for (i=0; i<results1.length; i++) {
+                    for (i = 0; i < results1.length; i++) {
                         var temp = {};
                         temp.id = results1[i].arxiv_id;
                         temp.title = results1[i].title;
                         recently_reviewed_articles.push(temp);
                     }
 
-                    console.log("\n\nPop Art:",popular_articles);
-                    console.log("\n\nRec Art:",recently_reviewed_articles);
+                    console.log("\n\nPop Art:", popular_articles);
+                    console.log("\n\nRec Art:", recently_reviewed_articles);
                     context.popular_articles = popular_articles;
                     context.recently_reviewed_articles = recently_reviewed_articles;
 
@@ -278,30 +214,30 @@ router.get("/public_articles", function(req, res) {
                 } else {
                     console.log("Error getting recently reviewed articles.");
                 }
-            });         
+            });
         } else {
             console.log("Error getting popular articles.");
         }
     });
 });
 
-router.post("/public_articles", function(req, res) {
+router.post("/public_articles", function (req, res) {
     var context = {};
     var search_term = req.body.search_term;
-    
+
     // List of categories for dropdown
     context['categories'] = arxiv.categories;
     context.user = req.user;
     context.isAuthenticated = req.isAuthenticated();
 
-    res.redirect('/public_articles/search?q='+ search_term.replace(/ /g,'+') +'&p=1')
+    res.redirect('/public_articles/search?q=' + search_term.replace(/ /g, '+') + '&p=1')
 });
 
-router.get("/public_articles/search", function(req, res) {
+router.get("/public_articles/search", function (req, res) {
     var context = {};
     var search_term, base_url, page = 1, cat = null, subCat = null, author = null;
     var sortBy = null, sortOrder = null;
-    
+
     // List of categories for dropdown
     context['categories'] = arxiv.categories;
 
@@ -311,61 +247,61 @@ router.get("/public_articles/search", function(req, res) {
     // Base URL for constructing URL of the different pages of search results
     base_url = "/public_articles/search?";
 
-    if(req.query.q) {
-       base_url += "q=" + req.query.q;
-       search_term = req.query.q.replace(/\+/g,' ');
-       // search_term = decodeURIComponent(search_term);
+    if (req.query.q) {
+        base_url += "q=" + req.query.q;
+        search_term = req.query.q.replace(/\+/g, ' ');
+        // search_term = decodeURIComponent(search_term);
     }
 
-    if(req.query.a) {
+    if (req.query.a) {
         base_url += "&a=" + req.query.a;
         author = decodeURIComponent(req.query.a);
         author = author.replace(/\+/g, ' ');
-    }   
+    }
 
-    if(req.query.cat) {
+    if (req.query.cat) {
         base_url += "&cat=" + req.query.cat;
         cat = decodeURIComponent(req.query.cat);
     }
-    
-    if(req.query.subcat) {
+
+    if (req.query.subcat) {
         base_url += "&subcat=" + req.query.subcat;
         subCat = decodeURIComponent(req.query.subcat);
     }
-    
-    if(req.query.sort_by) {
+
+    if (req.query.sort_by) {
         base_url += "&sort_by=" + req.query.sort_by;
         sortBy = decodeURIComponent(req.query.sort_by);
     }
 
-    if(req.query.order) {
+    if (req.query.order) {
         base_url += "&order=" + req.query.order;
         sortOrder = decodeURIComponent(req.query.order);
     }
 
-    if(req.query.p)
-       page = parseInt(req.query.p);
+    if (req.query.p)
+        page = parseInt(req.query.p);
 
     var arxiv_query = 'all:"' + search_term + '"';
 
-    if(cat && subCat) {
+    if (cat && subCat) {
         arxiv_query += " cat:" + cat;
-        
+
         if (subCat)
             arxiv_query += "." + subCat;
     }
 
-    if(author)
+    if (author)
         arxiv_query += ' au:"' + author + '"';
 
-    if(sortBy) {
+    if (sortBy) {
         if (sortBy === "submitted_date")
             arxiv_query += "&sortBy=submittedDate";
         else if (sortBy === "updated_date")
             arxiv_query += "&sortBy=lastUpdatedDate";
         else if (sortBy === "relevance")
             arxiv_query += "&sortBy=relevance";
-        
+
         if (sortOrder) {
             if (sortOrder === "asc")
                 arxiv_query += "&sortOrder=ascending";
@@ -375,29 +311,27 @@ router.get("/public_articles/search", function(req, res) {
     }
 
 
-    console.log("Search term:",search_term,"Page:",page);
+    console.log("Search term:", search_term, "Page:", page);
 
-    arxiv.searchArticles(arxiv_query, (page-1)*10, function(result) {
-        console.log("Search result",result);
+    arxiv.searchArticles(arxiv_query, (page - 1) * 10, function (result) {
+        console.log("Search result", result);
         context.count = result.count;
         context.search_results = result.results;
-        if(search_term) {
+        if (search_term) {
             context.search_term = search_term;
-            context.search_term_safe = search_term.replace(' ','+');
+            context.search_term_safe = search_term.replace(' ', '+');
         }
         context.page_number = page;
         context.pages = [];
-        context.previous = context.page_number === 1? false:true;
-        context.next = total_pages - context.page_number >= 10? false:true;
+        context.previous = context.page_number === 1 ? false : true;
+        context.next = total_pages - context.page_number >= 10 ? false : true;
         context.previous_page = context.page_number - 1;
         context.previous_page_url = base_url + "&p=" + context.previous_page;
         context.next_page = context.page_number + 1;
         context.next_page_url = base_url + "&p=" + context.next_page;
-        var total_pages = context.count/10;
-        if(total_pages-context.page_number+1 >= 10)
-        {
-            for(i=context.page_number; i<context.page_number+10; i++)
-            {
+        var total_pages = context.count / 10;
+        if (total_pages - context.page_number + 1 >= 10) {
+            for (i = context.page_number; i < context.page_number + 10; i++) {
                 context.pages.push({
                     number: i,
                     link: base_url + "&p=" + i
@@ -405,8 +339,7 @@ router.get("/public_articles/search", function(req, res) {
             }
         }
         else {
-            for(i=context.page_number; i<total_pages-context.page_number+1; i++)
-            {
+            for (i = context.page_number; i < total_pages - context.page_number + 1; i++) {
                 context.pages.push({
                     number: i,
                     link: base_url + "&p=" + i

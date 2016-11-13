@@ -46,8 +46,8 @@
                 <div class="row">
                     <div class="action">
                         <div class="col-sm-12">
-                            <h1 class="title">Open Peer Review System - Login</h1>
-                            <p>Login to review articles and upload your own work</p>
+                            <h1 class="title">Open Peer Review System - Registration</h1>
+                            <p>Enter your email id to complete registration</p>
                         </div>
                     </div>
                 </div>
@@ -58,15 +58,15 @@
     <section id ="first-view">
         <div class="oprs-home view-filler container-fluid col-sm-12">
             <div class="oprs-info col-sm-offset-2 col-sm-8 col-xs-12 text-center">
-                <p class="login-text">Please enter your Email-ID</p>
+                <p class="login-text">Please enter your email id to complete registration</p>
                 <div class="col-md-8 col-md-offset-2 col-sm-10 text-center login-btn-container">
                     <form action="/complete-registration" method="POST">
-	  <div class="group">
-	    <input type="text" name="email_id" id="email"><span class="highlight"></span><span class="bar"></span>
-	    <label>Email</label>
-	  </div>
-	   <button type="submit" class="btn btn-submit">Submit</a>
-	</form>
+                        <div class="group">
+                            <label>Email</label>
+                            <input type="text" name="email_id" id="email"><span class="highlight"></span><span class="bar"></span>
+                        </div>
+                        <input type="submit" class="btn btn-submit" value="Submit"></input>
+                    </form>
                 </div>
                 {{#if message }}
                 <p>{{ message }}</p>
