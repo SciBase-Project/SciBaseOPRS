@@ -16,6 +16,9 @@ var keywords = [];
 var contact_details={};
 var affiliations_list = [];
 var works_list = [];
+
+dotenv.config();
+
 router.get('/', function (req, res) {
     res.render('index', {
         title: 'SciBase OPRS',
@@ -31,8 +34,8 @@ router.get('/complete-registration', function (req, res) {
         host: 'pub.orcid.org',
         port : 443,
         path : '/oauth/token',
-        client_id : 'APP-VO0XMDR31PKE1X93',
-        client_secret: '1dcaf554-25a9-4b22-b6e4-ed69ed7410b3',
+        client_id : process.env.ORCID_CLIENT_ID,
+        client_secret: process.env.ORCID_CLIENT_SECRET,
         scope : '/read-public',
         grant_type : 'client_credentials',
         headers : {
