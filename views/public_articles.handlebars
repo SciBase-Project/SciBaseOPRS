@@ -85,7 +85,7 @@
             <div class="center-panel col-md-8 col-sm-8">
                 <div class="row">
                     <div>
-                        <h2 class="post-title center">Search for articles by title, keywords or author name.</h2>
+                        <h2 class="post-title center">Search for articles by author name.</h2>
                         <br>
                         <form method="POST" action="/public_articles">
                             <div class="form-group col-md-9 col-sm-12">
@@ -113,6 +113,10 @@
 
                         {{#if search_results}}
                             <h2>Search results</h2>
+                            {{#unless count}}
+                                <p>No Articles found for the searched author.</p>
+                            {{/unless}}
+
                             {{#each search_results}}
                             <div class="search-result">
                                 <a href="/public_articles/view/{{id}}"><h3>{{title}}</h3></a>

@@ -229,13 +229,14 @@ router.post("/public_articles", function (req, res) {
     context['categories'] = arxiv.categories;
     context.user = req.user;
     context.isAuthenticated = req.isAuthenticated();
+    res.redirect('/public_articles/search?q=' + search_term.replace(/ /g, '+') + '&p=1');
 
-    res.redirect('/public_articles/search?q=' + search_term.replace(/ /g, '+') + '&p=1')
+    
 });
 
 router.get("/public_articles/search", function (req, res) {
     var context = {};
-    var search_term, base_url, page = 1, cat = null, subCat = null, author = null;
+    var search_term = "", base_url, page = 1, cat = null, subCat = null, author = null;
     var sortBy = null, sortOrder = null;
 
     // List of categories for dropdown
@@ -282,7 +283,7 @@ router.get("/public_articles/search", function (req, res) {
     if (req.query.p)
         page = parseInt(req.query.p);
 
-    var arxiv_query = 'all:"' + search_term + '"';
+    var arxiv_query = '';
 
     if (cat && subCat) {
         arxiv_query += " cat:" + cat;
@@ -291,9 +292,81 @@ router.get("/public_articles/search", function (req, res) {
             arxiv_query += "." + subCat;
     }
 
-    if (author)
-        arxiv_query += ' au:"' + author + '"';
+         arxiv.checkIfAuthor(search_term, function(result){
+            if(result.length == 0){
+                console.log("Author not found in neo4j");
+                context.search_results = true;
+                context.count = 0;
+                res.render("public_articles", context);
+            }else{
+                console.log("Author found in neo4j");
+                //console.log(result);
+                arxiv_query+='(';
+                for(var i = 0;i<result.length;i++){
+                    //console.log(result[i]);
+                   arxiv_query += (i==0)?'au:"' + result[i] + '"':'+OR+au:"'+result[i]+'"';
 
+                }
+                arxiv_query+=')';
+               
+                if (sortBy) {
+                    if (sortBy === "submitted_date")
+                        arxiv_query += "&sortBy=submittedDate";
+                    else if (sortBy === "updated_date")
+                        arxiv_query += "&sortBy=lastUpdatedDate";
+                    else if (sortBy === "relevance")
+                        arxiv_query += "&sortBy=relevance";
+
+                    if (sortOrder) {
+                        if (sortOrder === "asc")
+                            arxiv_query += "&sortOrder=ascending";
+                        else if (sortOrder === "desc")
+                            arxiv_query += "&sortOrder=descending";
+                    }
+                }
+
+
+                console.log("Search term:", search_term, "Page:", page);
+                console.log("arxiv query:", arxiv_query);
+
+                arxiv.searchArticles(arxiv_query, (page - 1) * 10, function (result) {
+                    console.log("Search result", result);
+                    context.count = result.count;
+                    context.search_results = result.results;
+                    if (search_term) {
+                        context.search_term = search_term;
+                        context.search_term_safe = search_term.replace(' ', '+');
+                    }
+                    context.page_number = page;
+                    context.pages = [];
+                    context.previous = context.page_number === 1 ? false : true;
+                    context.next = total_pages - context.page_number >= 10 ? false : true;
+                    context.previous_page = context.page_number - 1;
+                    context.previous_page_url = base_url + "&p=" + context.previous_page;
+                    context.next_page = context.page_number + 1;
+                    context.next_page_url = base_url + "&p=" + context.next_page;
+                    var total_pages = context.count / 10;
+                    if (total_pages - context.page_number + 1 >= 10) {
+                        for (i = context.page_number; i < context.page_number + 10; i++) {
+                            context.pages.push({
+                                number: i,
+                                link: base_url + "&p=" + i
+                            });
+                        }
+                    }
+                    else {
+                        for (i = context.page_number; i < total_pages - context.page_number + 1; i++) {
+                            context.pages.push({
+                                number: i,
+                                link: base_url + "&p=" + i
+                            });
+                        }
+                    }
+                    res.render("public_articles", context);
+                });
+            }
+    });
+    /*
     if (sortBy) {
         if (sortBy === "submitted_date")
             arxiv_query += "&sortBy=submittedDate";
@@ -312,6 +385,7 @@ router.get("/public_articles/search", function (req, res) {
 
 
     console.log("Search term:", search_term, "Page:", page);
+    console.log("arxiv query:", arxiv_query);
 
     arxiv.searchArticles(arxiv_query, (page - 1) * 10, function (result) {
         console.log("Search result", result);
@@ -347,7 +421,7 @@ router.get("/public_articles/search", function (req, res) {
             }
         }
         res.render("public_articles", context);
-    });
+    }); */
 });
 
 module.exports = router;

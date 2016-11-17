@@ -1,8 +1,53 @@
 var request = require("request");
 var xml2js = require("xml2js");
 var ArxivArticle = require("../models/arxiv_article");
+var dotenv = require("dotenv");
+
+dotenv.config();
 
 module.exports = {
+    checkIfAuthor: function(author, callback) {
+
+        var NEO4J_API_URL = "http://"+process.env.NEO4J_HOST_NAME+"/db/data/transaction/commit";
+        var NEO4J_USER = process.env.NEO4J_USER;
+        var NEO4J_PASS = process.env.NEO4J_PASSWORD;
+        var Authors = [];
+        //console.log(NEO4J_API_URL, NEO4J_USER, NEO4J_PASS);
+        var query;
+
+        if (author.length <= 2){
+            query = "MATCH (a:Author) where a.Name =~ '(?i).*"+author+".*' return distinct a.Name LIMIT 10";
+        }else{
+            query ="MATCH (a:Author) where a.Name =~ '(?i).*"+author+".*' return distinct a.Name";
+        }
+        var request_json = {
+            "statements": [{
+                "statement": query
+            }]
+        };
+
+        
+        
+        var auth_payload = new Buffer(NEO4J_USER + ":" + NEO4J_PASS).toString('base64');
+        var res = request({
+            url: NEO4J_API_URL,
+            method: "POST",
+            json: request_json,
+            headers: {
+                "Authorization": "Basic " + auth_payload,
+                "Accept": "application/json; charset=UTF-8",
+            }
+        }, function(err, response, body) {
+            if (!err && response.statusCode === 200) {
+                for(var i = 0;i<body.results[0].data.length; i++)
+                    Authors.push(body.results[0].data[i].row[0]);
+            }
+            else {
+                console.log(err);
+            }
+            callback(Authors);
+        }); // request ends
+    },
     fetchArticle: function(id, callback) {
             var xml, article, result;
             var arxiv_url = "http://export.arxiv.org/api/query?id_list=";
