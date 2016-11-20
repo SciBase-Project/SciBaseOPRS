@@ -5,9 +5,24 @@ var ArxivArticle = require('../models/arxiv_article');
 var arxiv = require("../utils/arxiv");
 var router = express.Router();
 var mongoose = require('mongoose');
+var request = require('request');
+var https = require('https');
+var dotenv = require("dotenv");
+var data = {};
+var parsedData = {};
+var bio = '';
+var researcher_urls = [];
+var keywords = [];
+var contact_details = {};
+var affiliations_list = [];
+var works_list = [];
+var orcid_contributors_list = [];
+var funding_list = [];
 
+dotenv.config();
 
-router.get('/', function (req, res) {
+router.get('/', function(req, res) {
+    delete req.session.redirect;
     res.render('index', {
         title: 'SciBase OPRS',
         user: req.user,
@@ -16,11 +31,134 @@ router.get('/', function (req, res) {
 
 });
 
-router.get('/complete-registration', function (req, res) {
+router.get('/complete-registration', function(req, res) {
     let orcid = req.user.orcid;
-
+    var get_record_msg = {
+        url: 'https://pub.orcid.org/v1.2/[orcid]/orcid-profile',
+        method: 'GET',
+        headers: {
+            "Accept": 'application/orcid+json',
+        },
+    };
+    
+    get_record_msg.url = get_record_msg.url.replace('[orcid]', orcid);
+    request(get_record_msg, function(error, response, body) {
+        if (error && response.statusCode != 200) {
+            console.log("Error fetching data");
+        } else {
+            data = body;
+            parsedData = JSON.parse(data);
+            console.log("Fetched Data");
+            var orcid_bio = parsedData["orcid-profile"]["orcid-bio"];
+            if (parsedData["orcid-profile"]["orcid-activities"] != null) {
+                var orcid_affiliation = parsedData["orcid-profile"]["orcid-activities"]["affiliations"];
+                if (orcid_affiliation != null) {
+                    var affiliations = orcid_affiliation["affiliation"];
+                    for (var i = 0; i < affiliations.length; i++) {
+                        var orcid_affiliation_obj = {}
+                        orcid_affiliation_obj["type"] = affiliations[i]["type"];
+                        orcid_affiliation_obj["department"] = affiliations[i]["department-name"];
+                        orcid_affiliation_obj["role"] = affiliations[i]["role-title"];
+                        orcid_affiliation_obj["organization"] = affiliations[i]["organization"]["name"];
+                        affiliations_list.push(orcid_affiliation_obj);
+                    }
+                }
+                if (parsedData["orcid-profile"]["orcid-activities"]["orcid-works"] != null) {
+                    var orcid_works = parsedData["orcid-profile"]["orcid-activities"]["orcid-works"]["orcid-work"];
+                    for (var i = 0; i < orcid_works.length; i++) {
+                        var orcid_works_obj = {};
+                        orcid_works_obj["title"] = orcid_works[i]["work-title"]["title"]["value"];
+                        orcid_works_obj["journal"] = orcid_works[i]["journal-title"]["value"];
+                        orcid_works_obj["citation_type"] = orcid_works[i]["work-citation"]["work-citation-type"];
+                        orcid_works_obj["citation"] = orcid_works[i]["work-citation"]["citation"];
+                        orcid_works_obj["work_type"] = orcid_works[i]["work-type"];
+                        var pubdate = orcid_works[i]["publication-date"];
+                        var year = pubdate["year"]["value"];
+                        var month = pubdate["month"]["value"];
+                        var day = pubdate["day"];
+                        if (pubdate != null) {
+                            if (day == null) {
+                                var date = 'dd' + '-' + month + '-' + year;
+                            } else if (month == null) {
+                                var date = 'dd' + '-' + 'mm' + '-' + year;
+                            } else {
+                                var date = day + '-' + month + '-' + year;
+                            }
+                        }
+                        orcid_works_obj["pub_date"] = date;
+                        if (orcid_works[i]["work-contributors"] != null) {
+                            var orcid_contributors = orcid_works[i]["work-contributors"]["contributor"];
+                            for (var j = 0; j < orcid_contributors.length; j++) {
+                                var orcid_contributors_obj = {};
+                                orcid_contributors_obj["contributor_name"] = orcid_contributors[j]["credit-name"]["value"];
+                                orcid_contributors_obj["contributor_role"] = orcid_contributors[j]["contributor-attributes"]["contributor-role"];
+                                orcid_contributors_list.push(orcid_contributors_obj);
+                            }
+                        }
+                        orcid_works_obj["contributors"] = orcid_contributors_list;
+                        works_list.push(orcid_works_obj);
+                    }
+                }
+            }
+            if(orcid_bio["biography"] != null){
+                bio = orcid_bio["biography"]["value"];
+            }
+            var orcid_researcher_urls = orcid_bio["researcher-urls"];
+            if (orcid_researcher_urls != null) {
+                var researcher_urls_orcid_list = orcid_researcher_urls["researcher-url"];
+                for (var i = 0; i < researcher_urls_orcid_list.length; i++) {
+                    var orcid_research_urls_object = {}
+                    orcid_research_urls_object["url_name"] = researcher_urls_orcid_list[i]["url-name"]["value"];
+                    orcid_research_urls_object["url"] = researcher_urls_orcid_list[i]["url"]["value"]
+                    researcher_urls.push(orcid_research_urls_object);
+                }
+            }
+            var keywords_list = orcid_bio["keywords"];
+            if (keywords_list != null) {
+                keywords_csv = keywords_list["keyword"][0]["value"];
+                keywords = keywords_csv.split(',');
+            }
+            var orcid_contact_details = orcid_bio["contact-details"];
+            if (orcid_contact_details != null) {
+                contact_details["country"] = orcid_contact_details["address"]["country"]["value"];
+                contact_details["email"] = orcid_contact_details["email"];
+            }
+            var orcid_funding = parsedData["orcid-profile"]["orcid-activities"]["funding-list"];
+            if (orcid_funding != null) {
+                var orcid_funding_list = orcid_funding["funding"];
+                for (var i = 0; i < orcid_funding_list.length; i++) {
+                    var orcid_funding_obj = {};
+                    orcid_funding_obj["funding_type"] = orcid_funding_list[i]["funding-type"];
+                    orcid_funding_obj["funding_title"] = orcid_funding_list[i]["funding-title"]["title"]["value"];
+                    orcid_funding_obj["description"] = orcid_funding_list[i]["short-description"];
+                    orcid_funding_obj["amount"] = {};
+                    if (orcid_funding_list[i]["amount"] != null) {
+                        orcid_funding_obj["amount"]["currency_code"] = orcid_funding_list[i]["amount"]["currency-code"];
+                        orcid_funding_obj["amount"]["amount"] = orcid_funding_list[i]["amount"]["value"];
+                    }
+                    orcid_funding_obj["url"] = orcid_funding_list[i]["url"]["value"];
+                    orcid_funding_obj["agency"] = {};
+                    orcid_funding_obj["agency"]["country"] = orcid_funding_list[i]["organization"]["address"]["country"];
+                    orcid_funding_obj["agency"]["city"] = orcid_funding_list[i]["organization"]["address"]["city"];
+                    orcid_funding_obj["agency"]["name"] = orcid_funding_list[i]["organization"]["name"];
+                    funding_list.push(orcid_funding_obj);
+                }
+            }
+            console.log("Orcid bio : ", bio);
+            console.log("Orcid urls : ", researcher_urls);
+            console.log("Orcid keywords : ", keywords);
+            console.log("Orcid contact details : ", contact_details);
+            console.log("Orcid affiliations : ", affiliations_list);
+            console.log("Orcid works : ", works_list);
+            console.log("Orcid funding : ", funding_list);
+            User.findOneAndUpdate({ orcid: req.user.orcid }, { bio: bio, researcher_urls: researcher_urls, keywords: keywords, contact_details: contact_details, affiliations: affiliations_list, works: works_list, funding: funding_list }, (err, user) => {
+                if (err) console.log(err);
+                console.log("Data added");
+            });
+        }
+    });
     if (req.user.email) {
-        res.redirect('/');
+        res.redirect(req.session.redirect);
     } else {
         res.render('complete-registration', {
             title: 'Complete Registration | SciBase OPRS',
@@ -29,17 +167,18 @@ router.get('/complete-registration', function (req, res) {
     }
 });
 
-router.post('/complete-registration', function (req, res) {
+router.post('/complete-registration', function(req, res) {
     var email_id = req.body.email_id;
 
     User.findOneAndUpdate({ orcid: req.user.orcid }, { email: email_id }, (err, user) => {
-        if(err) next(err);
+        if (err) next(err);
         console.log("Email updated");
-        res.redirect('/');
+        res.redirect(req.session.redirect);
     });
 });
 
-router.get('/login', function (req, res) {
+router.get('/login', function(req, res) {
+    req.session.redirect = req.headers.referer;
     res.render('login', {
         title: "Login - SciBase | OPRS",
         user: req.user,
@@ -47,9 +186,9 @@ router.get('/login', function (req, res) {
     });
 });
 
-router.get('/logout', function (req, res, next) {
+router.get('/logout', function(req, res, next) {
     req.logout();
-    req.session.save(function (err) {
+    req.session.save(function(err) {
         if (err) {
             return next(err);
         }
@@ -57,17 +196,18 @@ router.get('/logout', function (req, res, next) {
     });
 });
 
-router.get('/getSubCategories', function (req, res, next) {
+router.get('/getSubCategories', function(req, res, next) {
     var cat = req.query.category_id;
 
     res.send(arxiv.category_subcategory_mapping[cat]);
 });
 
-router.get('/ping', function (req, res) {
+router.get('/ping', function(req, res) {
     res.status(200).send("pong!");
 });
 
-router.get('/public_articles/view/:article_id', function (req, res) {
+router.get('/public_articles/view/:article_id', function(req, res) {
+    delete req.session.redirect;
     var context = {};
     var article_id = req.params.article_id;
     console.log("Article id", article_id);
@@ -75,42 +215,43 @@ router.get('/public_articles/view/:article_id', function (req, res) {
     ArxivArticle.findOneAndUpdate({
         arxiv_id: article_id
     }, {
-            $inc: {
-                views: 1
-            }
-        }, function (err, article) {
-            if (err) next(err);
+        $inc: {
+            views: 1
+        }
+    }, function(err, article) {
+        if (err) next(err);
 
-            if (article) {
-                console.log("Number of views:", article.views);
+        if (article) {
+            console.log("Number of views:", article.views);
 
-                // console.log("Found article\n", article);
-                context.title = article.title;
-                context.author_names = article.authors.map(function (a) {
-                    return a.name;
-                }).join(", ");
-                context.publish_date = article.published_at.toDateString();
-                context.arxiv_url = article.arxiv_url;
-                context.pdf_url = article.pdf_url;
-                context.arxiv_comments = article.arxiv_comments;
-                context.category_name = article.arxiv_category;
-                context.summary = article.summary;
-                context.comments = article.comments.map(function (c) {
-                    c.created_at = c.created_at.toDateString();
-                    return c;
-                });
-                context.user = req.user;
-                context.isAuthenticated = req.isAuthenticated();
-                res.render('arxiv_article', context);
-            } else {
-                arxiv.fetchArticle(article_id, function () {
-                    res.redirect("/public_articles/view/" + article_id);
-                });
-            }
-        }); // findOne ends
+            // console.log("Found article\n", article);
+            context.title = article.title;
+            context.id = article_id;
+            context.author_names = article.authors.map(function(a) {
+                return a.name;
+            }).join(", ");
+            context.publish_date = article.published_at.toDateString();
+            context.arxiv_url = article.arxiv_url;
+            context.pdf_url = article.pdf_url;
+            context.arxiv_comments = article.arxiv_comments;
+            context.category_name = article.arxiv_category;
+            context.summary = article.summary;
+            context.comments = article.comments.map(function(c) {
+                c.created_at = c.created_at.toDateString();
+                return c;
+            });
+            context.user = req.user;
+            context.isAuthenticated = req.isAuthenticated();
+            res.render('arxiv_article', context);
+        } else {
+            arxiv.fetchArticle(article_id, function() {
+                res.redirect("/public_articles/view/" + article_id);
+            });
+        }
+    }); // findOne ends
 });
 
-router.post('/public_articles/view/:article_id', function (req, res) {
+router.post('/public_articles/view/:article_id', function(req, res) {
     // TODO: This needs to handle adding of comments via POST request
     var context = {};
     var article_id = req.params.article_id;
@@ -130,7 +271,7 @@ router.post('/public_articles/view/:article_id', function (req, res) {
 
         ArxivArticle.findOne({
             arxiv_id: article_id
-        }, function (err, article) {
+        }, function(err, article) {
             if (err) next(err);
 
             if (article) {
@@ -144,7 +285,7 @@ router.post('/public_articles/view/:article_id', function (req, res) {
                 article.save();
 
                 context.title = article.title;
-                context.author_names = article.authors.map(function (a) {
+                context.author_names = article.authors.map(function(a) {
                     return a.name;
                 }).join(", ");
                 context.publish_date = article.published_at.toDateString();
@@ -153,15 +294,14 @@ router.post('/public_articles/view/:article_id', function (req, res) {
                 context.arxiv_comments = article.arxiv_comments;
                 context.category_name = article.arxiv_category;
                 context.summary = article.summary;
-                context.comments = article.comments.map(function (c) {
+                context.comments = article.comments.map(function(c) {
                     c.created_at = c.created_at.toDateString();
                     return c;
                 });
                 context.user = req.user;
                 context.isAuthenticated = req.isAuthenticated();
                 res.render('arxiv_article', context);
-            }
-            else {
+            } else {
                 res.status(404).send("Article not found");
             }
         });
@@ -171,9 +311,10 @@ router.post('/public_articles/view/:article_id', function (req, res) {
     }
 });
 
-router.get("/public_articles", function (req, res) {
+router.get("/public_articles", function(req, res) {
     var context = {};
-    var popular_articles = [], recently_reviewed_articles = [];
+    var popular_articles = [],
+        recently_reviewed_articles = [];
 
     // List of categories for dropdown
     context['categories'] = arxiv.categories;
@@ -181,17 +322,17 @@ router.get("/public_articles", function (req, res) {
     context.user = req.user;
     context.isAuthenticated = req.isAuthenticated();
 
-    ArxivArticle.find({}).sort('-views').limit(10).exec(function (err, results) {
+    ArxivArticle.find({}).sort('-views').limit(10).exec(function(err, results) {
         if (!err) {
             console.log("Popular articles:", results);
-            ArxivArticle.find({}).sort('-last_commented_at').limit(10).exec(function (err1, results1) {
+            ArxivArticle.find({}).sort('-last_commented_at').limit(10).exec(function(err1, results1) {
                 if (!err1) {
                     console.log("Recently reviewed articles:", results1);
                     for (var i = 0; i < results.length; i++) {
                         var temp = {};
                         temp.id = results[i].arxiv_id;
                         temp.title = results[i].title;
-                        temp.author_names = results[i].authors.map(function (a) {
+                        temp.author_names = results[i].authors.map(function(a) {
                             return a.name;
                         }).join(", ");
                         temp.publish_date = results[i].published_at.toDateString();
@@ -221,7 +362,7 @@ router.get("/public_articles", function (req, res) {
     });
 });
 
-router.post("/public_articles", function (req, res) {
+router.post("/public_articles", function(req, res) {
     var context = {};
     var search_term = req.body.search_term;
 
@@ -233,10 +374,14 @@ router.post("/public_articles", function (req, res) {
     res.redirect('/public_articles/search?q=' + search_term.replace(/ /g, '+') + '&p=1')
 });
 
-router.get("/public_articles/search", function (req, res) {
+router.get("/public_articles/search", function(req, res) {
     var context = {};
-    var search_term, base_url, page = 1, cat = null, subCat = null, author = null;
-    var sortBy = null, sortOrder = null;
+    var search_term, base_url, page = 1,
+        cat = null,
+        subCat = null,
+        author = null;
+    var sortBy = null,
+        sortOrder = null;
 
     // List of categories for dropdown
     context['categories'] = arxiv.categories;
@@ -313,7 +458,7 @@ router.get("/public_articles/search", function (req, res) {
 
     console.log("Search term:", search_term, "Page:", page);
 
-    arxiv.searchArticles(arxiv_query, (page - 1) * 10, function (result) {
+    arxiv.searchArticles(arxiv_query, (page - 1) * 10, function(result) {
         console.log("Search result", result);
         context.count = result.count;
         context.search_results = result.results;
@@ -337,8 +482,7 @@ router.get("/public_articles/search", function (req, res) {
                     link: base_url + "&p=" + i
                 });
             }
-        }
-        else {
+        } else {
             for (i = context.page_number; i < total_pages - context.page_number + 1; i++) {
                 context.pages.push({
                     number: i,
