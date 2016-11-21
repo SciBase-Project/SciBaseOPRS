@@ -12,11 +12,9 @@ var User = new Schema({
 	contact_details: Schema.Types.Mixed,
 	affiliations: [Schema.Types.Mixed],
 	works: [Schema.Types.Mixed],
-<<<<<<< HEAD
 	funding: [Schema.Types.Mixed],
 	fetched_orcid_data: {type: Boolean, default: false},
-=======
->>>>>>> 89a1b58feafe05535378c3bfc33c61a49cc44526
+
 });
 
 module.exports = mongoose.model('User', User); 
