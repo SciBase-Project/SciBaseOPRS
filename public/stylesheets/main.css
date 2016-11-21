@@ -287,8 +287,11 @@
 #header .navbar-inverse .navbar-nav  li.active > a,
 #header .navbar-inverse .navbar-nav  li.active > a:focus,
 #header .navbar-nav.navbar-right li > a:hover,
-.navbar-inverse .navbar-nav > .open > a {
-  background-color: inherit;
+.navbar-inverse .navbar-nav > .open > a,
+.navbar-inverse .navbar-nav > .open > a:visited,
+.navbar-inverse .navbar-nav > .open > a:active,
+.navbar-inverse .navbar-nav > .open > a:hover{
+  background-color: inherit !important;
   border: 0;
   color: #00aeef;
 }

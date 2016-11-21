@@ -9,6 +9,17 @@ var mongoose = require('mongoose');
 var request = require('request');
 var https = require('https');
 var dotenv = require("dotenv");
+<<<<<<< HEAD
+=======
+var data = {};
+var parsedData = {};
+var bio = '';
+var researcher_urls=[];
+var keywords = [];
+var contact_details={};
+var affiliations_list = [];
+var works_list = [];
+>>>>>>> 89a1b58feafe05535378c3bfc33c61a49cc44526
 
 dotenv.config();
 
@@ -23,6 +34,7 @@ router.get('/', function(req, res) {
 
 router.get('/complete-registration', function(req, res) {
     let orcid = req.user.orcid;
+<<<<<<< HEAD
     
     User.findOne({
         orcid: orcid
@@ -67,6 +79,124 @@ router.get('/complete-registration', function(req, res) {
             });
         }
     });
+=======
+    var get_token = {
+        host: 'pub.orcid.org',
+        port : 443,
+        path : '/oauth/token',
+        client_id : process.env.ORCID_CLIENT_ID,
+        client_secret: process.env.ORCID_CLIENT_SECRET,
+        scope : '/read-public',
+        grant_type : 'client_credentials',
+        headers : {
+            'Accept' : 'application/json',
+        },
+    };
+    var profile_token = "";
+        var req_get_token = https.request(get_token, function(res) {
+        res.on('data', function(d) {
+            profile_token = d.access_token;
+        });
+    });
+        req_get_token.end();
+    var get_record_msg = {
+            url : 'https://pub.orcid.org/v1.2/[orcid]/orcid-profile',
+            method : 'GET',
+            headers: {
+                "Accept": 'application/orcid+json',
+            },
+        };
+    get_record_msg.headers['Authorization'] = 'Bearer ' + profile_token;
+    get_record_msg.url = get_record_msg.url.replace('[orcid]', orcid);
+request(get_record_msg, function(error, response, body){
+  if (error && response.statusCode != 200) {
+    console.log("Error fetching data");
+  }
+  else{
+     data  = body;
+
+parsedData = JSON.parse(data);
+   console.log("Fetched Data");
+   var orcid_bio = parsedData["orcid-profile"]["orcid-bio"];
+   if(parsedData["orcid-profile"]["orcid-activities"] != null)
+   {
+    var orcid_affiliation = parsedData["orcid-profile"]["orcid-activities"]["affiliations"];
+    var orcid_works = parsedData["orcid-profile"]["orcid-activities"]["orcid-works"]["orcid-work"];
+        var affiliations = orcid_affiliation["affiliation"];
+    for (var i=0;i<affiliations.length; i++){
+        var orcid_affiliation_obj={}
+        orcid_affiliation_obj["type"] =  affiliations[i]["type"];
+        orcid_affiliation_obj["department"] = affiliations[i]["department-name"];
+        orcid_affiliation_obj["role"] = affiliations[i]["role-title"];
+        orcid_affiliation_obj["organization"] = affiliations[i]["organization"]["name"];
+        affiliations_list.push(orcid_affiliation_obj);
+
+    }
+        for (var i=0;i<orcid_works.length; i++){
+            var orcid_works_obj={};
+        orcid_works_obj["title"] = orcid_works[i]["work-title"]["title"]["value"];
+        orcid_works_obj["journal"] = orcid_works[i]["journal-title"]["value"];
+        orcid_works_obj["citation_type"] = orcid_works[i]["work-citation"]["work-citation-type"];
+        orcid_works_obj["citation"] = orcid_works[i]["work-citation"]["citation"];
+        orcid_works_obj["work_type"] = orcid_works[i]["work-type"];
+        var pubdate = orcid_works[i]["publication-date"];
+        var year = pubdate["year"]["value"];
+        var month = pubdate["month"]["value"];
+        var day = pubdate["day"];
+        if(pubdate != null){
+            if(day == null){
+            var date = 'dd'+ '-' + month + '-' + year;
+        }
+        else if(month == null){
+            var date = 'dd' + '-' + 'mm' + '-' + year;
+        }
+        else{
+            var date = day + '-' + month + '-' + year;
+        }
+        }
+        
+
+        orcid_works_obj["pub_date"] = date;
+        var orcid_contributors= orcid_works[i]["work-contributors"]["contributor"];
+        
+        var orcid_contributors_list=[]
+        for(var j=0;j<orcid_contributors.length;j++){
+            var orcid_contributors_obj={};
+            orcid_contributors_obj["contributor_name"] = orcid_contributors[j]["credit-name"]["value"];
+            orcid_contributors_obj["contributor_role"] = orcid_contributors[j]["contributor-attributes"]["contributor-role"];
+            orcid_contributors_list.push(orcid_contributors_obj);
+        }
+        works_list.push(orcid_works_obj);
+        works_list.push(orcid_contributors_list);
+
+    }
+}
+    bio = orcid_bio["biography"];
+    researcher_urls = orcid_bio["researcher-urls"];
+    keywords = orcid_bio["keywords"];
+    contact_details = orcid_bio["contact-details"];
+    console.log(bio);
+    console.log(researcher_urls);
+    console.log(keywords);
+    console.log(contact_details);
+    console.log(affiliations_list);
+    console.log(works_list);
+    User.findOneAndUpdate({ orcid: req.user.orcid }, { bio: bio, researcher_urls : researcher_urls, keywords : keywords, contact_details : contact_details, affiliations : affiliations_list, works : works_list }, (err, user) => {
+        if(err) next(err);
+        console.log("Data added");
+    });
+}
+});
+    
+    if (req.user.email) {
+        res.redirect('/');
+    } else {
+        res.render('complete-registration', {
+            title: 'Complete Registration | SciBase OPRS',
+            user: req.user,
+        });
+    }
+>>>>>>> 89a1b58feafe05535378c3bfc33c61a49cc44526
 });
 
 router.post('/complete-registration', function(req, res) {
