@@ -88,6 +88,9 @@ router.post('/complete-registration', function(req, res) {
 });
 
 router.get('/login', function(req, res) {
+    if(req.user){
+        return res.redirect('/')
+    }
     req.session.redirect = req.headers.referer;
     res.render('login', {
         title: "Login - SciBase | OPRS",
