@@ -48,6 +48,57 @@ module.exports = {
             callback(Authors);
         }); // request ends
     },
+    searchNeo4j: function(author, callback) {
+
+        var NEO4J_API_URL = "http://"+process.env.NEO4J_HOST_NAME+"/db/data/transaction/commit";
+        var NEO4J_USER = process.env.NEO4J_USER;
+        var NEO4J_PASS = process.env.NEO4J_PASSWORD;
+        var results_object = {};
+        var results = [];
+        var query = "match (a:Article)-[:authored_by]->(b:Author) where ";
+
+       for(var i = 0; i< author.length; i++){
+            query += (i==0)?("b.Name =~ '"+author[i]+"' "): ("or b.Name =~ '"+author[i]+"' ");
+       }
+       query +="return a.Title, a.DOI, a.Year, a.Month, b.Name order by b.Name Desc";
+
+       console.log("neo4j query ",query);
+        var request_json = {
+            "statements": [{
+                "statement": query
+            }]
+        };
+
+        var auth_payload = new Buffer(NEO4J_USER + ":" + NEO4J_PASS).toString('base64');
+        var res = request({
+            url: NEO4J_API_URL,
+            method: "POST",
+            json: request_json,
+            headers: {
+                "Authorization": "Basic " + auth_payload,
+                "Accept": "application/json; charset=UTF-8",
+            }
+        }, function(err, response, body) {
+            results_object.count = 0;
+            if (!err && response.statusCode === 200) {
+                for(var i = 0;i<body.results[0].data.length; i++){
+                    var temp = {}, temp_id;
+                    temp.id = body.results[0].data[i].row[1];       //DOI
+                    temp.title = body.results[0].data[i].row[0];    //Title
+                    temp.published_at = body.results[0].data[i].row[3] +" "+ body.results[0].data[i].row[2]; // YEAR + MONTH
+                    temp.authors = body.results[0].data[i].row[4];  //AUTHORS
+                    results.push(temp);
+
+                    results_object.results = results;
+                }
+                results_object.count = i;
+            }
+            else {
+                console.log(err);
+            }
+            callback(results_object);
+        }); // request ends
+    },
     fetchArticle: function(id, callback) {
             var xml, article, result;
             var arxiv_url = "http://export.arxiv.org/api/query?id_list=";

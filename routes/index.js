@@ -329,7 +329,7 @@ router.get("/public_articles/search", function (req, res) {
                 console.log("Search term:", search_term, "Page:", page);
                 console.log("arxiv query:", arxiv_query);
 
-                arxiv.searchArticles(arxiv_query, (page - 1) * 10, function (result) {
+                /*arxiv.searchArticles(arxiv_query, (page - 1) * 10, function (result) {
                     console.log("Search result", result);
                     context.count = result.count;
                     context.search_results = result.results;
@@ -363,6 +363,39 @@ router.get("/public_articles/search", function (req, res) {
                         }
                     }
                     res.render("public_articles", context);
+                });
+                */
+                arxiv.searchNeo4j(result, function(search_res){
+                    console.log(search_res);
+                    context.count = search_res.count;
+                    context.search_results = search_res.results;
+                    context.page_number = page;
+                    context.pages = [];
+                    context.previous = context.page_number === 1 ? false : true;
+                    context.next = total_pages - context.page_number >= 10 ? false : true;
+                    context.previous_page = context.page_number - 1;
+                    context.previous_page_url = base_url + "&p=" + context.previous_page;
+                    context.next_page = context.page_number + 1;
+                    context.next_page_url = base_url + "&p=" + context.next_page;
+                    var total_pages = context.count / 10;
+                    if (total_pages - context.page_number + 1 >= 10) {
+                        for (i = context.page_number; i < context.page_number + 10; i++) {
+                            context.pages.push({
+                                number: i,
+                                link: base_url + "&p=" + i
+                            });
+                        }
+                    }
+                    else {
+                        for (i = context.page_number; i < total_pages - context.page_number + 1; i++) {
+                            context.pages.push({
+                                number: i,
+                                link: base_url + "&p=" + i
+                            });
+                        }
+                    }
+                    res.render("public_articles", context);
+
                 });
             }
     });
