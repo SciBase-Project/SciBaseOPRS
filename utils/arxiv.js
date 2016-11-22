@@ -48,24 +48,30 @@ module.exports = {
             callback(Authors);
         }); // request ends
     },
-    searchNeo4j: function(author, callback) {
+    searchNeo4j: function(author, page, callback) {
 
         var NEO4J_API_URL = "http://"+process.env.NEO4J_HOST_NAME+"/db/data/transaction/commit";
         var NEO4J_USER = process.env.NEO4J_USER;
         var NEO4J_PASS = process.env.NEO4J_PASSWORD;
         var results_object = {};
         var results = [];
+        var matching_param = "";
         var query = "match (a:Article)-[:authored_by]->(b:Author) where ";
 
        for(var i = 0; i< author.length; i++){
-            query += (i==0)?("b.Name =~ '"+author[i]+"' "): ("or b.Name =~ '"+author[i]+"' ");
+            matching_param += (i==0)?("b.Name =~ '"+author[i]+"' "): ("or b.Name =~ '"+author[i]+"' ");
        }
-       query +="return a.Title, a.DOI, a.Year, a.Month, b.Name order by b.Name Desc";
+       query +=matching_param;
+       var count_query = query;
+       count_query+="return count(a)";
+       query+="return a.Title, a.DOI, a.Year, a.Month, b.Name order by b.Name desc skip "+((page-1)*10)+" limit 10";
 
        console.log("neo4j query ",query);
         var request_json = {
             "statements": [{
                 "statement": query
+            },{
+                "statement":count_query
             }]
         };
 
@@ -79,8 +85,9 @@ module.exports = {
                 "Accept": "application/json; charset=UTF-8",
             }
         }, function(err, response, body) {
-            results_object.count = 0;
+            
             if (!err && response.statusCode === 200) {
+                results_object.count = body.results[1].data[0].row[0];
                 for(var i = 0;i<body.results[0].data.length; i++){
                     var temp = {}, temp_id;
                     temp.id = body.results[0].data[i].row[1];       //DOI
@@ -91,7 +98,7 @@ module.exports = {
 
                     results_object.results = results;
                 }
-                results_object.count = i;
+                
             }
             else {
                 console.log(err);

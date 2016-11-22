@@ -365,7 +365,7 @@ router.get("/public_articles/search", function (req, res) {
                     res.render("public_articles", context);
                 });
                 */
-                arxiv.searchNeo4j(result, function(search_res){
+                arxiv.searchNeo4j(result, page, function(search_res){
                     console.log(search_res);
                     context.count = search_res.count;
                     context.search_results = search_res.results;
