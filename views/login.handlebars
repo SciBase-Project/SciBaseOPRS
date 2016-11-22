@@ -30,16 +30,23 @@
                         <li><a href="#">User Articles</a></li>
                         {{#if user }}
                         <li>
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span id = "firstName"></span>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <span id = "firstName"></span>
                             <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="/logout">Logout</a></li>
+                            <ul class="dropdown-menu dropdown-width smallerFont">
+                            <li class="text-left li-padding"><span>ORCID-ID: </span><span id= "orcid" class="text-left"></span></li>
+                            <li class="divider"></li>
+                            {{#if user.current_organization}}
+                            <li class="text-left li-padding"><span>Organization: </span><span id= "organization" class="text-left"></span></li>
+                            <li class="divider"></li>
+                            {{/if}}
+                                <li class="text-left li-padding"><a href="/logout">Logout</a></li>
                             </ul>
                         </li>
                         {{else}}
                         <li><a href="/login">Login</a></li>
                         {{/if}}
-                    </ul>  
+                    </ul> 
                 </div>
             </div>
         </div>
@@ -49,6 +56,11 @@
          {{#if user}}
              var fullName = "{{user.name}}".split(" ");
              $("#firstName").text(fullName[0]);
+             var orcid_id = "{{user.orcid}}"
+             $("#orcid").text(orcid_id);
+              var orcid_organization = "{{user.current_organization}}"
+             $("#organization").text(orcid_organization);
+            
          {{/if}}
 
         });
