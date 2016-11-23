@@ -28,11 +28,54 @@
                             <span id = "firstName"></span>
                             <span class="caret"></span></a>
                             <ul class="dropdown-menu dropdown-width smallerFont">
-                            <li class="text-left li-padding"><span>ORCID-ID: </span><span id= "orcid" class="text-left"></span></li>
+                            <li class="text-left li-padding"><span><b>Orcid-id: </b></span><span id= "orcid" class="text-left"></span></li>
                             <li class="divider"></li>
                             {{#if user.current_organization}}
-                            <li class="text-left li-padding"><span>Organization: </span><span id= "organization" class="text-left"></span></li>
+                            <li class="text-left li-padding"><span><b>Organization: </b></span><span id= "organization" class="text-left"></span></li>
                             <li class="divider"></li>
+                            {{/if}}
+                            {{#if user.works}}
+                            <li class="text-left li-padding"><span><b>Recent-work: </b></span>
+                            <br>
+                            <div class="row">
+                            <div class="col-md-6">
+                            <span><b>Journal</b><span>
+                            <br>
+                            <span class="journal_name"></span>
+                            </div>
+                            <div class="col-md-6">
+                            
+                            <span><b>Title</b></span>
+                           
+                            <br>
+                            <span class="paper_title"></span>
+                            </div>
+                            </div>
+                            </li>
+<li class="divider"></li>
+                            {{/if}}
+                            {{#if user.funding}}
+                            <li class="text-left li-padding"><span><b>Funding: </b></span>
+                            <br>
+                            <div class="row">
+                            <div class="col-md-4">
+                            <span><b>Title</b><span>
+                            <br>
+                            <span class="funding_name"></span>
+                            </div>
+                            <div class="col-md-4">   
+                            <span><b>Type</b></span>
+                            <br>
+                            <span class="funding_type"></span>
+                            </div>
+                            <div class="col-md-4">   
+                            <span><b>Amount</b></span>
+                            <br>
+                            <span class="funding_amount"></span>
+                            </div>
+                            </div>
+                            </li>
+<li class="divider"></li>
                             {{/if}}
                                 <li class="text-left li-padding"><a href="/logout">Logout</a></li>
                             </ul>
@@ -47,14 +90,25 @@
     </header>
     <script>
         $(document).ready(function(){
+
          {{#if user}}
              var fullName = "{{user.name}}".split(" ");
              $("#firstName").text(fullName[0]);
              var orcid_id = "{{user.orcid}}"
              $("#orcid").text(orcid_id);
-              var orcid_organization = "{{user.current_organization}}"
+            var orcid_organization = "{{user.current_organization}}"
              $("#organization").text(orcid_organization);
-            
+             var journal_name = "{{user.works.0.journal}}";
+             var paper_title = "{{user.works.0.title}}";
+             $('.journal_name').text(journal_name);
+             $('.paper_title').text(paper_title);
+              var funding_name = "{{user.funding.0.agency.name}}";
+             var funding_type = "{{user.funding.0.funding_type}}"
+             var funding_amount = "{{user.funding.0.amount.currency_code}}" + ' ' + "{{user.funding.0.amount.amount}}"
+             $('.funding_name').text(funding_name);
+             $('.funding_type').text(funding_type);
+             $('.funding_amount').text(funding_amount);
+             
          {{/if}}
 
         });

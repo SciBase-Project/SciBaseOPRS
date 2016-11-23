@@ -2946,11 +2946,13 @@ ul.recently-reviewed-articles li:last-child {
   margin-bottom: 100px;
 }
 .dropdown-width{
-  width:240px;
+  width:340px;
 }
 .li-padding{
   padding-left: 1em;
 }
 .smallerFont{
   font-size: 13px;
+}
+.bold{
 }
